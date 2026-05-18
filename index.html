@@ -488,6 +488,28 @@
     .sync-status { bottom: 16px; left: 16px; right: auto; }
   }
 
+  /* ---------- TOAST ---------- */
+  .flash-toast {
+    position: fixed;
+    bottom: 88px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #0f1c3a;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 200;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .flash-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+
   /* ---------- SYNC STATUS DOT ---------- */
   .sync-status {
     position: fixed;
@@ -1091,9 +1113,34 @@
 
 <!-- EXPORT -->
 <section id="export" class="tab">
-  <h2>Google Calendar export</h2>
+  <h2>Calendar &amp; booking</h2>
+
   <div class="card">
-    <p>Click below to download an <code>.ics</code> file with all your scheduled calls.</p>
+    <h3>Guest booking link</h3>
+    <p class="muted" style="margin-top:0">Paste your Google Calendar Appointment Scheduling URL. It'll appear on every Dream Guest as a one-click share button.</p>
+    <label>Booking page URL</label>
+    <input type="text" id="booking-link-input" placeholder="https://calendar.app.google/..." />
+    <label style="margin-top:10px">Default message (use <code>{LINK}</code> as placeholder)</label>
+    <textarea id="booking-msg-input" placeholder="Hey! Would love to have you on the show. Pick a time: {LINK}"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="saveBookingSettings()">Save</button>
+      <span id="booking-saved" class="muted small" style="display:none">✓ Saved</span>
+    </div>
+    <details style="margin-top:12px">
+      <summary>How do I get this URL?</summary>
+      <ol style="margin-top:8px;line-height:1.7">
+        <li>Open <a href="https://calendar.google.com" target="_blank">Google Calendar</a></li>
+        <li>Click <strong>Create → Appointment schedule</strong></li>
+        <li>Title: "ABC Podcast recording" · Duration: 15 min · Set your weekly availability windows</li>
+        <li>Click <strong>Save</strong></li>
+        <li>Click <strong>Open booking page</strong> and copy the URL from your browser bar — paste it above</li>
+      </ol>
+    </details>
+  </div>
+
+  <div class="card">
+    <h3>Calendar export (.ics)</h3>
+    <p style="margin-top:0">Click below to download an <code>.ics</code> file with all your scheduled calls.</p>
     <div class="row">
       <button class="btn" onclick="downloadIcs()">Download abc-podcast.ics</button>
       <button class="btn btn-ghost" onclick="copyIcs()">Copy .ics text to clipboard</button>
@@ -1307,6 +1354,8 @@ const DEFAULT_STATE = {
   igqa: [],       // { id, text, askedBy, date, used }
   dreams: [],     // { id, name, role, contact, why, notes, status: 'idea'|'contacted'|'scheduled'|'passed', addedAt }
   notes: [],      // { id, text, createdAt }
+  bookingLink: '',// Google Calendar appointment scheduling URL
+  bookingMessage: "Hey! Would love to have you on the ABC Podcast — Anesthesia Business Chat. It's a 15-min recorded chat over Riverside. Pick a slot here: {LINK}",
   segmentFilter: 'all',
   dreamFilter: 'active',
   seeded: false,
@@ -2576,6 +2625,14 @@ function renderAll() {
   renderQuestions();
   renderIgQa();
   renderDreams();
+  renderBookingSettings();
+}
+
+function renderBookingSettings() {
+  const linkEl = document.getElementById('booking-link-input');
+  const msgEl = document.getElementById('booking-msg-input');
+  if (linkEl && document.activeElement !== linkEl) linkEl.value = state.bookingLink || '';
+  if (msgEl && document.activeElement !== msgEl) msgEl.value = state.bookingMessage || '';
 }
 
 // =========================================================================
@@ -2637,6 +2694,64 @@ function openInstagram(handle) {
   const h = handle.replace(/^@/, '').split(/[\s,/]/)[0];
   if (!h) return;
   window.open('https://instagram.com/' + encodeURIComponent(h), '_blank');
+}
+
+function saveBookingSettings() {
+  state.bookingLink = (document.getElementById('booking-link-input').value || '').trim();
+  state.bookingMessage = document.getElementById('booking-msg-input').value || '';
+  save();
+  renderAll();
+  const el = document.getElementById('booking-saved');
+  if (el) {
+    el.style.display = 'inline';
+    setTimeout(() => { el.style.display = 'none'; }, 2000);
+  }
+}
+
+function copyBookingLink(name) {
+  if (!state.bookingLink) {
+    alert('Add a booking link first in the Calendar & booking tab.');
+    switchTab('export');
+    setTimeout(() => document.getElementById('booking-link-input').focus(), 100);
+    return;
+  }
+  const msg = (state.bookingMessage || '{LINK}').replace('{LINK}', state.bookingLink);
+  navigator.clipboard.writeText(msg).then(() => {
+    flashToast('Message copied — paste into IG/email');
+  }).catch(() => {
+    prompt('Copy this message:', msg);
+  });
+}
+
+function shareViaInstagram(ig, name) {
+  if (!state.bookingLink) {
+    alert('Add a booking link first in the Calendar & booking tab.');
+    switchTab('export');
+    return;
+  }
+  const msg = (state.bookingMessage || '{LINK}').replace('{LINK}', state.bookingLink);
+  navigator.clipboard.writeText(msg).then(() => {
+    flashToast(`Message copied — paste into @${ig}'s DMs`);
+    window.open('https://instagram.com/' + encodeURIComponent(ig), '_blank');
+  }).catch(() => {
+    prompt('Copy this message, then open IG:', msg);
+    window.open('https://instagram.com/' + encodeURIComponent(ig), '_blank');
+  });
+}
+
+let toastTimer = null;
+function flashToast(text) {
+  let t = document.getElementById('flash-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'flash-toast';
+    t.className = 'flash-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
 function setDreamFilter(f) {
@@ -2709,8 +2824,10 @@ function renderDreams() {
           <span class="pill ${d.status === 'scheduled' ? 'pill-ok' : d.status === 'contacted' ? 'pill-warn' : d.status === 'passed' ? 'pill-grey' : 'pill-blue'}">${statusLabels[d.status]}</span>
         </div>
         <div class="row" style="margin-top:12px;gap:6px">
-          ${ig ? `<button class="btn btn-sm btn-ghost" onclick="openInstagram('${escapeHtml(ig)}')">View on Instagram →</button>` : ''}
-          ${d.status !== 'scheduled' ? `<button class="btn btn-sm" onclick="scheduleDreamGuest('${d.id}')">Schedule now →</button>` : ''}
+          ${ig && state.bookingLink ? `<button class="btn btn-sm" onclick="shareViaInstagram('${escapeHtml(ig)}', '${escapeHtml(d.name)}')">💬 Send via IG</button>` : ''}
+          ${!ig && state.bookingLink ? `<button class="btn btn-sm btn-ghost" onclick="copyBookingLink('${escapeHtml(d.name)}')">📋 Copy booking msg</button>` : ''}
+          ${ig ? `<button class="btn btn-sm btn-ghost" onclick="openInstagram('${escapeHtml(ig)}')">View on IG →</button>` : ''}
+          ${d.status !== 'scheduled' ? `<button class="btn btn-sm btn-ghost" onclick="scheduleDreamGuest('${d.id}')">Manual schedule</button>` : ''}
           <button class="btn btn-sm btn-ghost" onclick="setEditing('d-${d.id}')">Edit</button>
           <select class="btn-select status-${d.status}" onchange="updateDreamStatus('${d.id}', this.value)">
             <option value="idea" ${d.status==='idea'?'selected':''}>Idea</option>
