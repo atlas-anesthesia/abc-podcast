@@ -176,6 +176,39 @@
   .btn-danger { background: var(--danger); box-shadow: 0 1px 2px rgba(192,57,43,0.2); }
   .btn-danger:hover { background: #8e2820; }
   .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+
+  select.btn-select {
+    width: auto;
+    display: inline-block;
+    padding: 6px 30px 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #fff;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3e%3cpath d='M1 1l4 4 4-4' stroke='%235a6885' stroke-width='1.5' fill='none' stroke-linecap='round'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+  select.btn-select:hover { border-color: var(--blue); background-color: var(--blue-tint); }
+  select.btn-select:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(30,76,163,0.12);
+  }
+  select.btn-select.status-idea { background-color: var(--blue-soft); color: var(--blue-dark); border-color: transparent; }
+  select.btn-select.status-contacted { background-color: #fbeacd; color: var(--warn); border-color: transparent; }
+  select.btn-select.status-scheduled { background-color: #dff4e6; color: var(--ok); border-color: transparent; }
+  select.btn-select.status-passed { background-color: #eef0f5; color: #5a6885; border-color: transparent; }
+  select.btn-select.status-recorded { background-color: var(--blue-soft); color: var(--blue-dark); border-color: transparent; }
+  select.btn-select.status-published { background-color: #dff4e6; color: var(--ok); border-color: transparent; }
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .row-between { justify-content: space-between; }
   .muted { color: var(--ink-soft); font-size: 13px; }
@@ -1435,7 +1468,7 @@ function renderSchedule() {
           <button class="btn btn-sm" style="background:#c0392b" onclick="startRecording('${ep.id}')">🔴 Record mode</button>
           <button class="btn btn-sm btn-ghost" onclick="setEditing('ep-${ep.id}')">Edit</button>
           <a class="btn btn-sm btn-ghost" target="_blank" href="${gcalUrl}">📅 Add to calendar</a>
-          <select class="btn-sm" style="padding:5px" onchange="updateEpisodeStatus('${ep.id}', this.value)">
+          <select class="btn-select status-${ep.status}" onchange="updateEpisodeStatus('${ep.id}', this.value)">
             <option value="scheduled" ${ep.status==='scheduled'?'selected':''}>Scheduled</option>
             <option value="recorded" ${ep.status==='recorded'?'selected':''}>Recorded</option>
             <option value="published" ${ep.status==='published'?'selected':''}>Published</option>
@@ -2216,7 +2249,7 @@ function renderNotes() {
           <span class="muted small">${timeAgo(n.createdAt)}</span>
           <div class="row" style="gap:6px">
             <button class="btn btn-sm btn-ghost" onclick="setEditing('note-${n.id}')">Edit</button>
-            <select onchange="noteToQuestion('${n.id}', this.value); this.value=''" class="btn-sm" style="padding:4px 6px;font-size:12px">
+            <select onchange="noteToQuestion('${n.id}', this.value); this.value=''" class="btn-select">
               <option value="">→ Move to pool…</option>
               ${segOptions}
             </select>
@@ -2679,11 +2712,11 @@ function renderDreams() {
           ${ig ? `<button class="btn btn-sm btn-ghost" onclick="openInstagram('${escapeHtml(ig)}')">View on Instagram →</button>` : ''}
           ${d.status !== 'scheduled' ? `<button class="btn btn-sm" onclick="scheduleDreamGuest('${d.id}')">Schedule now →</button>` : ''}
           <button class="btn btn-sm btn-ghost" onclick="setEditing('d-${d.id}')">Edit</button>
-          <select class="btn-sm" style="padding:5px" onchange="updateDreamStatus('${d.id}', this.value)">
-            <option value="idea" ${d.status==='idea'?'selected':''}>Status: Idea</option>
-            <option value="contacted" ${d.status==='contacted'?'selected':''}>Status: Contacted</option>
-            <option value="scheduled" ${d.status==='scheduled'?'selected':''}>Status: Scheduled</option>
-            <option value="passed" ${d.status==='passed'?'selected':''}>Status: Passed</option>
+          <select class="btn-select status-${d.status}" onchange="updateDreamStatus('${d.id}', this.value)">
+            <option value="idea" ${d.status==='idea'?'selected':''}>Idea</option>
+            <option value="contacted" ${d.status==='contacted'?'selected':''}>Contacted</option>
+            <option value="scheduled" ${d.status==='scheduled'?'selected':''}>Scheduled</option>
+            <option value="passed" ${d.status==='passed'?'selected':''}>Passed</option>
           </select>
           <button class="btn btn-sm btn-danger" onclick="deleteDreamGuest('${d.id}')">Delete</button>
         </div>
