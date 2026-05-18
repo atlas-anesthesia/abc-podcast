@@ -151,37 +151,72 @@
     box-shadow: 0 0 0 3px rgba(30,76,163,0.12);
   }
   textarea { min-height: 76px; resize: vertical; line-height: 1.5; }
-  button.btn, .btn {
+  .btn, button.btn, a.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     background: var(--blue);
     color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 14px;
+    border: 1px solid transparent;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+    transition: background 0.15s, transform 0.05s, box-shadow 0.15s, border-color 0.15s;
     font-family: inherit;
-    box-shadow: 0 1px 2px rgba(30,76,163,0.2);
+    box-shadow: 0 1px 2px rgba(30,76,163,0.18);
+    text-decoration: none;
+    line-height: 1.2;
+    white-space: nowrap;
   }
-  button.btn:hover, .btn:hover { background: var(--blue-dark); box-shadow: 0 2px 6px rgba(30,76,163,0.25); }
-  button.btn:active, .btn:active { transform: translateY(1px); }
-  .btn-ghost {
-    background: transparent;
-    color: var(--blue);
+  .btn:hover, button.btn:hover, a.btn:hover { background: var(--blue-dark); box-shadow: 0 2px 6px rgba(30,76,163,0.25); }
+  .btn:active, button.btn:active, a.btn:active { transform: translateY(1px); }
+  .btn.btn-ghost, button.btn.btn-ghost, a.btn.btn-ghost {
+    background: #fff;
+    color: var(--ink);
     border: 1px solid var(--line);
     box-shadow: none;
+    font-weight: 500;
   }
-  .btn-ghost:hover { background: var(--blue-soft); border-color: var(--blue); box-shadow: none; }
-  .btn-danger { background: var(--danger); box-shadow: 0 1px 2px rgba(192,57,43,0.2); }
-  .btn-danger:hover { background: #8e2820; }
-  .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+  .btn.btn-ghost:hover, button.btn.btn-ghost:hover, a.btn.btn-ghost:hover {
+    background: var(--blue-tint);
+    border-color: var(--blue);
+    color: var(--blue-dark);
+  }
+  .btn.btn-danger, button.btn.btn-danger {
+    background: #fff;
+    color: var(--danger);
+    border: 1px solid #f4cdc8;
+    box-shadow: none;
+    font-weight: 500;
+  }
+  .btn.btn-danger:hover, button.btn.btn-danger:hover {
+    background: var(--danger);
+    color: #fff;
+    border-color: var(--danger);
+  }
+  .btn.btn-success, button.btn.btn-success {
+    background: var(--ok);
+    border-color: transparent;
+    box-shadow: 0 1px 2px rgba(26,138,74,0.2);
+  }
+  .btn.btn-success:hover, button.btn.btn-success:hover { background: #146e3b; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+  .btn.btn-record, button.btn.btn-record {
+    background: #e84a3a;
+    border-color: transparent;
+    box-shadow: 0 1px 2px rgba(232,74,58,0.22);
+  }
+  .btn.btn-record:hover, button.btn.btn-record:hover { background: #d93525; }
 
   select.btn-select {
     width: auto;
-    display: inline-block;
-    padding: 6px 30px 6px 12px;
-    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 28px 6px 12px;
+    font-size: 12px;
     font-weight: 600;
     background: #fff;
     border: 1px solid var(--line);
@@ -191,6 +226,8 @@
     font-family: inherit;
     appearance: none;
     -webkit-appearance: none;
+    line-height: 1.2;
+    height: 30px;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3e%3cpath d='M1 1l4 4 4-4' stroke='%235a6885' stroke-width='1.5' fill='none' stroke-linecap='round'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 10px center;
@@ -213,13 +250,17 @@
   .row-between { justify-content: space-between; }
   .muted { color: var(--ink-soft); font-size: 13px; }
   .pill {
-    display: inline-block;
-    padding: 3px 10px;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
     border-radius: 999px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    height: 22px;
+    box-sizing: border-box;
   }
   .pill-blue { background: var(--blue-soft); color: var(--blue-dark); }
   .pill-ok { background: #dff4e6; color: var(--ok); }
@@ -1138,28 +1179,6 @@
     </details>
   </div>
 
-  <div class="card">
-    <h3>Calendar export (.ics)</h3>
-    <p style="margin-top:0">Click below to download an <code>.ics</code> file with all your scheduled calls.</p>
-    <div class="row">
-      <button class="btn" onclick="downloadIcs()">Download abc-podcast.ics</button>
-      <button class="btn btn-ghost" onclick="copyIcs()">Copy .ics text to clipboard</button>
-    </div>
-  </div>
-
-  <div class="card instructions">
-    <h3 style="margin-top:0">Optional: auto-syncing Google Calendar feed</h3>
-    <p>Your app is already at <code>atlas-anesthesia.github.io/abc-podcast/</code>. You can put the <code>.ics</code> file in that same repo so Google Calendar can subscribe to it.</p>
-    <ol>
-      <li>Click <strong>Download abc-podcast.ics</strong> above.</li>
-      <li>Open this folder on your Mac: <code>~/Projects/abc-podcast</code>. Drop the downloaded file in there.</li>
-      <li>In Terminal, run:<br/><code>cd ~/Projects/abc-podcast && git add abc-podcast.ics && git commit -m "update calendar" && git push</code></li>
-      <li>The feed URL will be: <code>https://atlas-anesthesia.github.io/abc-podcast/abc-podcast.ics</code></li>
-      <li>In Google Calendar, click <strong>+</strong> next to "Other calendars" → <strong>From URL</strong> → paste that URL.</li>
-    </ol>
-    <p><strong>Each time you change the schedule:</strong> re-download, replace the file, re-run the git command. Google Calendar polls roughly every 24h.</p>
-    <p class="muted small" style="margin-top:8px">💡 For instant calendar adds on your own account, use the per-event "Add to Google Calendar" button on each scheduled call — no setup needed.</p>
-  </div>
 
   <div class="card">
     <h3>Backup / restore data</h3>
@@ -1501,27 +1520,24 @@ function renderSchedule() {
     }
     return `
       <div class="episode-item">
-        <div class="episode-header">
-          <div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+          <div style="flex:1;min-width:220px">
             <h3 style="margin:0">${escapeHtml(ep.guest)}</h3>
-            <div class="muted" style="margin-top:2px">${ep.role ? escapeHtml(ep.role) : ''}</div>
+            ${ep.role ? `<div class="muted" style="margin-top:2px">${escapeHtml(ep.role)}</div>` : ''}
+            <div style="margin-top:8px">📅 ${formatDateTime(d)}</div>
+            ${ep.notes ? `<div class="muted small" style="margin-top:6px">${escapeHtml(ep.notes)}</div>` : ''}
           </div>
-          <span class="pill ${statusPill}">${ep.status}</span>
-        </div>
-        <div style="margin-top:8px">
-          <div>📅 ${formatDateTime(d)}</div>
-          ${ep.notes ? `<div class="muted" style="margin-top:6px">${escapeHtml(ep.notes)}</div>` : ''}
-        </div>
-        <div class="row" style="margin-top:12px;gap:6px">
-          <button class="btn btn-sm" onclick="openBuilder('${ep.id}')">📝 Build outline</button>
-          <button class="btn btn-sm" style="background:#c0392b" onclick="startRecording('${ep.id}')">🔴 Record mode</button>
-          <button class="btn btn-sm btn-ghost" onclick="setEditing('ep-${ep.id}')">Edit</button>
-          <a class="btn btn-sm btn-ghost" target="_blank" href="${gcalUrl}">📅 Add to calendar</a>
-          <select class="btn-select status-${ep.status}" onchange="updateEpisodeStatus('${ep.id}', this.value)">
+          <select class="btn-select status-${ep.status}" onchange="updateEpisodeStatus('${ep.id}', this.value)" style="flex-shrink:0">
             <option value="scheduled" ${ep.status==='scheduled'?'selected':''}>Scheduled</option>
             <option value="recorded" ${ep.status==='recorded'?'selected':''}>Recorded</option>
             <option value="published" ${ep.status==='published'?'selected':''}>Published</option>
           </select>
+        </div>
+        <div class="row" style="margin-top:12px;gap:6px">
+          <button class="btn btn-sm" onclick="openBuilder('${ep.id}')">📝 Build outline</button>
+          <button class="btn btn-sm btn-record" onclick="startRecording('${ep.id}')">🔴 Record mode</button>
+          <a class="btn btn-sm btn-ghost" target="_blank" href="${gcalUrl}">Add to calendar</a>
+          <button class="btn btn-sm btn-ghost" onclick="setEditing('ep-${ep.id}')">Edit</button>
           <button class="btn btn-sm btn-danger" onclick="deleteEpisode('${ep.id}')">Delete</button>
         </div>
       </div>
@@ -1597,7 +1613,7 @@ function renderEpisodeOutline(ep) {
       <div class="muted small">${segs.length} segment${segs.length===1?'':'s'} · ${totalQs} question${totalQs===1?'':'s'} · ${igCount} IG Q&amp;A${igCount===1?'':'s'}</div>
       <div class="row" style="margin-top:12px;gap:6px">
         <button class="btn btn-sm" onclick="openBuilder('${ep.id}')">📝 Build outline</button>
-        <button class="btn btn-sm" style="background:#c0392b" onclick="startRecording('${ep.id}')">🔴 Record mode</button>
+        <button class="btn btn-sm btn-record" onclick="startRecording('${ep.id}')">🔴 Record mode</button>
         <button class="btn btn-sm btn-danger" onclick="deleteEpisode('${ep.id}')">Delete</button>
       </div>
     </div>
@@ -2814,27 +2830,26 @@ function renderDreams() {
     }
     return `
       <div class="dream-item status-${d.status}">
-        <div class="row row-between" style="align-items:flex-start">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
           <div style="flex:1;min-width:220px">
             <h3 style="margin:0">${escapeHtml(d.name)}</h3>
             ${d.role ? `<div class="muted" style="margin-top:2px">${escapeHtml(d.role)}</div>` : ''}
             ${ig ? `<div style="margin-top:6px;font-size:14px">📷 <a href="https://instagram.com/${encodeURIComponent(ig)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">@${escapeHtml(ig)}</a></div>` : ''}
             ${d.contact ? `<div style="margin-top:4px;font-size:14px">✉️ ${escapeHtml(d.contact)}</div>` : ''}
           </div>
-          <span class="pill ${d.status === 'scheduled' ? 'pill-ok' : d.status === 'contacted' ? 'pill-warn' : d.status === 'passed' ? 'pill-grey' : 'pill-blue'}">${statusLabels[d.status]}</span>
-        </div>
-        <div class="row" style="margin-top:12px;gap:6px">
-          ${ig && state.bookingLink ? `<button class="btn btn-sm" onclick="shareViaInstagram('${escapeHtml(ig)}', '${escapeHtml(d.name)}')">💬 Send via IG</button>` : ''}
-          ${!ig && state.bookingLink ? `<button class="btn btn-sm btn-ghost" onclick="copyBookingLink('${escapeHtml(d.name)}')">📋 Copy booking msg</button>` : ''}
-          ${ig ? `<button class="btn btn-sm btn-ghost" onclick="openInstagram('${escapeHtml(ig)}')">View on IG →</button>` : ''}
-          ${d.status !== 'scheduled' ? `<button class="btn btn-sm btn-ghost" onclick="scheduleDreamGuest('${d.id}')">Manual schedule</button>` : ''}
-          <button class="btn btn-sm btn-ghost" onclick="setEditing('d-${d.id}')">Edit</button>
-          <select class="btn-select status-${d.status}" onchange="updateDreamStatus('${d.id}', this.value)">
+          <select class="btn-select status-${d.status}" onchange="updateDreamStatus('${d.id}', this.value)" style="flex-shrink:0">
             <option value="idea" ${d.status==='idea'?'selected':''}>Idea</option>
             <option value="contacted" ${d.status==='contacted'?'selected':''}>Contacted</option>
             <option value="scheduled" ${d.status==='scheduled'?'selected':''}>Scheduled</option>
             <option value="passed" ${d.status==='passed'?'selected':''}>Passed</option>
           </select>
+        </div>
+        <div class="row" style="margin-top:12px;gap:6px">
+          ${ig && state.bookingLink ? `<button class="btn btn-sm" onclick="shareViaInstagram('${escapeHtml(ig)}', '${escapeHtml(d.name)}')">💬 Send via IG</button>` : ''}
+          ${!ig && state.bookingLink ? `<button class="btn btn-sm" onclick="copyBookingLink('${escapeHtml(d.name)}')">📋 Copy booking msg</button>` : ''}
+          ${d.status !== 'scheduled' ? `<button class="btn btn-sm btn-success" onclick="scheduleDreamGuest('${d.id}')">✅ They booked!</button>` : ''}
+          ${ig ? `<button class="btn btn-sm btn-ghost" onclick="openInstagram('${escapeHtml(ig)}')">View on IG</button>` : ''}
+          <button class="btn btn-sm btn-ghost" onclick="setEditing('d-${d.id}')">Edit</button>
           <button class="btn btn-sm btn-danger" onclick="deleteDreamGuest('${d.id}')">Delete</button>
         </div>
       </div>
