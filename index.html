@@ -204,6 +204,12 @@
   }
   .btn.btn-success:hover, button.btn.btn-success:hover { background: #146e3b; }
   .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+  label.btn-file-label {
+    text-transform: none;
+    letter-spacing: 0;
+    margin-bottom: 0;
+    cursor: pointer;
+  }
   .btn.btn-record, button.btn.btn-record {
     background: #e84a3a;
     border-color: transparent;
@@ -1181,15 +1187,15 @@
 
 
   <div class="card">
-    <h3>Backup / restore data</h3>
-    <p class="muted">Everything saves in your browser. Export a JSON backup just in case.</p>
-    <div class="row">
-      <button class="btn btn-ghost" onclick="exportData()">Export backup (JSON)</button>
-      <label class="btn btn-ghost" style="cursor:pointer;display:inline-block">
-        Import backup
+    <h3 style="margin-top:0">Backup / restore data</h3>
+    <p class="muted" style="margin-top:0">Everything saves in the cloud. Export a JSON backup just in case.</p>
+    <div class="row" style="gap:8px">
+      <button class="btn btn-ghost" onclick="exportData()">Export backup</button>
+      <label class="btn btn-ghost btn-file-label">
+        <span>Import backup</span>
         <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importData(event)" />
       </label>
-      <button class="btn btn-danger btn-sm" onclick="resetAll()">Reset all data</button>
+      <button class="btn btn-danger" onclick="resetAll()">Reset all data</button>
     </div>
   </div>
 </section>
