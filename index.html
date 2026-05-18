@@ -1157,29 +1157,7 @@
   <h2>Calendar</h2>
 
   <div class="card">
-    <h3 style="margin-top:0">Live calendar</h3>
-    <p class="muted" style="margin-top:0">Paste your Google Calendar embed URL or calendar ID below — bookings will show here in real time.</p>
-    <div class="row" style="gap:8px">
-      <input type="text" id="cal-embed-input" placeholder="Calendar ID (e.g. abc@group.calendar.google.com) or full embed URL" style="flex:1" />
-      <button class="btn" onclick="saveCalEmbed()">Save</button>
-      <span id="cal-saved" class="muted small" style="display:none;align-self:center">✓ Saved</span>
-    </div>
-    <div id="cal-frame-wrap" style="margin-top:14px"></div>
-    <details style="margin-top:12px">
-      <summary>How do I get this?</summary>
-      <ol style="margin-top:8px;line-height:1.7">
-        <li>Open <a href="https://calendar.google.com" target="_blank">Google Calendar</a></li>
-        <li><strong>Recommended:</strong> make a dedicated calendar so only podcast bookings show here — click the <strong>+</strong> next to "Other calendars" → <strong>Create new calendar</strong> → name it "ABC Podcast bookings"</li>
-        <li>When you set up Appointment Scheduling (above), select "ABC Podcast bookings" as the destination calendar</li>
-        <li>In your calendars list (left side), hover over "ABC Podcast bookings" → click <strong>⋮</strong> → <strong>Settings and sharing</strong></li>
-        <li>Under "Access permissions for events," check <strong>"Make available to public"</strong> → click OK</li>
-        <li>Scroll down to <strong>"Integrate calendar"</strong> → copy the <strong>Calendar ID</strong> (or the full <strong>Public URL to this calendar</strong>) → paste above</li>
-      </ol>
-    </details>
-  </div>
-
-  <div class="card">
-    <h3>Guest booking link</h3>
+    <h3 style="margin-top:0">Guest booking link</h3>
     <p class="muted" style="margin-top:0">Paste your Google Calendar Appointment Scheduling URL. It'll appear on every Dream Guest as a one-click share button.</p>
     <label>Booking page URL</label>
     <input type="text" id="booking-link-input" placeholder="https://calendar.app.google/..." />
@@ -1397,7 +1375,6 @@ const DEFAULT_STATE = {
   notes: [],      // { id, text, createdAt }
   bookingLink: '',// Google Calendar appointment scheduling URL
   bookingMessage: "Hey! Would love to have you on the ABC Podcast — Anesthesia Business Chat. It's a 15-min recorded chat over Riverside. Pick a slot here: {LINK}",
-  calendarEmbed: '', // Google Calendar embed URL or calendar ID
   segmentFilter: 'all',
   dreamFilter: 'active',
   seeded: false,
@@ -2672,39 +2649,6 @@ function renderBookingSettings() {
   const msgEl = document.getElementById('booking-msg-input');
   if (linkEl && document.activeElement !== linkEl) linkEl.value = state.bookingLink || '';
   if (msgEl && document.activeElement !== msgEl) msgEl.value = state.bookingMessage || '';
-  renderCalendarEmbed();
-}
-
-function buildEmbedUrl(input) {
-  const v = (input || '').trim();
-  if (!v) return '';
-  if (v.startsWith('http')) return v.includes('embed') ? v : v;
-  const id = encodeURIComponent(v);
-  return `https://calendar.google.com/calendar/embed?src=${id}&ctz=America%2FChicago&mode=AGENDA`;
-}
-
-function renderCalendarEmbed() {
-  const input = document.getElementById('cal-embed-input');
-  const wrap = document.getElementById('cal-frame-wrap');
-  if (!input || !wrap) return;
-  if (document.activeElement !== input) input.value = state.calendarEmbed || '';
-  if (!state.calendarEmbed) {
-    wrap.innerHTML = '<div class="empty"><strong>No calendar connected yet</strong>Paste your calendar ID or embed URL above to see your bookings here.</div>';
-    return;
-  }
-  const url = buildEmbedUrl(state.calendarEmbed);
-  wrap.innerHTML = `<iframe src="${escapeHtml(url)}" style="width:100%;height:600px;border:1px solid var(--line);border-radius:10px;background:#fff" frameborder="0" scrolling="no"></iframe>`;
-}
-
-function saveCalEmbed() {
-  state.calendarEmbed = (document.getElementById('cal-embed-input').value || '').trim();
-  save();
-  renderCalendarEmbed();
-  const el = document.getElementById('cal-saved');
-  if (el) {
-    el.style.display = 'inline';
-    setTimeout(() => { el.style.display = 'none'; }, 2000);
-  }
 }
 
 // =========================================================================
