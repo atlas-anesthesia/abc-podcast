@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ABC Podcast Organizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #1e4ca3;
+    --blue-dark: #14306b;
+    --blue-light: #3a6bcc;
+    --blue-soft: #eef2fb;
+    --blue-tint: #f7f9fd;
+    --bg: #f6f8fc;
+    --card: #ffffff;
+    --ink: #0c1834;
+    --ink-soft: #5a6885;
+    --line: #e4e9f4;
+    --line-soft: #eef1f8;
+    --danger: #c0392b;
+    --ok: #1a8a4a;
+    --warn: #c98a1d;
+    --shadow-sm: 0 1px 2px rgba(15, 30, 65, 0.04), 0 1px 3px rgba(15, 30, 65, 0.06);
+    --shadow-md: 0 4px 12px rgba(15, 30, 65, 0.06), 0 2px 4px rgba(15, 30, 65, 0.04);
+    --shadow-lg: 0 12px 32px rgba(15, 30, 65, 0.10), 0 4px 8px rgba(15, 30, 65, 0.04);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  header {
+    background: linear-gradient(135deg, #1e4ca3 0%, #2a5cbf 100%);
+    color: #fff;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    box-shadow: 0 2px 12px rgba(15, 30, 65, 0.1);
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-logo {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    font-weight: 800;
+    font-size: 20px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .brand-title { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .brand-sub { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+  nav {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 0 16px;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 1px 0 rgba(15,30,65,0.02);
+  }
+  nav button {
+    background: none;
+    border: none;
+    padding: 15px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    font-family: inherit;
+  }
+  nav button.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+  nav button:hover { color: var(--blue-dark); }
+  main { padding: 28px 24px 60px; max-width: 1100px; margin: 0 auto; }
+  .tab { display: none; }
+  .tab.active { display: block; }
+  h2 {
+    margin: 0 0 6px 0;
+    color: var(--ink);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+  }
+  h2 + .muted, h2 + p { margin-top: 0; margin-bottom: 20px; }
+  h3 {
+    margin: 0 0 10px 0;
+    color: var(--ink);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line-soft);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--ink);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(30,76,163,0.12);
+  }
+  textarea { min-height: 76px; resize: vertical; line-height: 1.5; }
+  button.btn, .btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+    font-family: inherit;
+    box-shadow: 0 1px 2px rgba(30,76,163,0.2);
+  }
+  button.btn:hover, .btn:hover { background: var(--blue-dark); box-shadow: 0 2px 6px rgba(30,76,163,0.25); }
+  button.btn:active, .btn:active { transform: translateY(1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--blue);
+    border: 1px solid var(--line);
+    box-shadow: none;
+  }
+  .btn-ghost:hover { background: var(--blue-soft); border-color: var(--blue); box-shadow: none; }
+  .btn-danger { background: var(--danger); box-shadow: 0 1px 2px rgba(192,57,43,0.2); }
+  .btn-danger:hover { background: #8e2820; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .row-between { justify-content: space-between; }
+  .muted { color: var(--ink-soft); font-size: 13px; }
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .pill-blue { background: var(--blue-soft); color: var(--blue-dark); }
+  .pill-ok { background: #dff4e6; color: var(--ok); }
+  .pill-warn { background: #fbeacd; color: var(--warn); }
+  .pill-grey { background: #eef0f5; color: #5a6885; }
+  .episode-item, .guest-item, .question-item, .qa-item {
+    background: #fff;
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s;
+  }
+  .episode-item:hover, .guest-item:hover, .question-item:hover, .qa-item:hover {
+    box-shadow: var(--shadow-md);
+  }
+  .episode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .segment-block {
+    background: var(--blue-soft);
+    border-left: 3px solid var(--blue);
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  .question-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+  }
+  .question-line + .question-line { border-top: 1px dashed var(--line); }
+  .empty {
+    text-align: center;
+    padding: 32px;
+    color: var(--ink-soft);
+    background: #fff;
+    border: 2px dashed var(--line);
+    border-radius: 8px;
+  }
+  .segment-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .segment-tabs button {
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .segment-tabs button.active {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+  .countdown {
+    background: linear-gradient(135deg, var(--blue), var(--blue-light));
+    color: #fff;
+    padding: 22px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+  }
+  .countdown .big { font-size: 32px; font-weight: 800; }
+  .small { font-size: 12px; color: var(--ink-soft); }
+  details summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 8px 0;
+    color: var(--blue);
+  }
+  details summary:hover { color: var(--blue-dark); }
+  .instructions {
+    background: #fffaeb;
+    border: 1px solid #ecd699;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .instructions code {
+    background: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .checkbox-line { display: flex; align-items: center; gap: 8px; }
+  .checkbox-line input[type="checkbox"] { width: auto; }
+  hr { border: none; border-top: 1px solid var(--line); margin: 16px 0; }
+
+  /* ---------- SYNC STATUS DOT ---------- */
+  .sync-status {
+    position: fixed;
+    bottom: 14px;
+    right: 14px;
+    padding: 6px 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    box-shadow: var(--shadow-sm);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sync-status::before {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #999;
+    display: inline-block;
+  }
+  .sync-status.synced::before { background: var(--ok); }
+  .sync-status.syncing::before { background: var(--warn); animation: pulse 1s infinite; }
+  .sync-status.error::before { background: var(--danger); }
+  .sync-status.offline::before { background: #aaa; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* ---------- SEGMENT GRID (Dashboard) ---------- */
+  .seg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .seg-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--blue);
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.15s;
+  }
+  .seg-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(30,76,163,0.12); }
+  .seg-card h4 { margin: 0 0 4px 0; font-size: 15px; }
+  .seg-card .seg-desc { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; min-height: 28px; }
+  .seg-card .seg-stats {
+    display: flex; gap: 10px;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .seg-card .seg-stats b { color: var(--ink); }
+  .seg-card .seg-fresh-q {
+    background: var(--blue-soft);
+    border-radius: 5px;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: var(--blue-dark);
+    margin-top: 6px;
+    line-height: 1.4;
+    font-style: italic;
+  }
+  .seg-card .seg-empty {
+    background: #fbeacd;
+    border-radius: 5px;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: var(--warn);
+    margin-top: 6px;
+  }
+
+  /* ---------- QUICK NOTES ---------- */
+  .note-item {
+    background: var(--blue-tint);
+    border: 1px solid var(--line-soft);
+    border-left: 3px solid var(--blue-light);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    transition: background 0.15s;
+  }
+  .note-item:hover { background: var(--blue-soft); }
+  .note-text { font-size: 14px; line-height: 1.4; color: var(--ink); }
+  .note-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- DREAM GUEST CARDS ---------- */
+  .dream-item {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 4px solid #9b59b6;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .dream-item.status-contacted { border-left-color: #c98a1d; }
+  .dream-item.status-scheduled { border-left-color: var(--ok); opacity: 0.7; }
+  .dream-item.status-passed { border-left-color: #999; opacity: 0.5; }
+
+  /* ---------- EPISODE BUILDER MODAL ---------- */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 24, 52, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 900;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 30px 16px;
+    overflow-y: auto;
+  }
+  .modal-backdrop.active { display: flex; }
+  .modal {
+    background: var(--bg);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 880px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    margin: auto 0;
+  }
+  .modal-header {
+    background: #fff;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .modal-header h2 { font-size: 20px; margin: 0; color: var(--ink); }
+  .modal-header .sub { color: var(--ink-soft); font-size: 14px; margin-top: 4px; }
+  .modal-close {
+    background: var(--blue-soft);
+    color: var(--blue-dark);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .modal-close:hover { background: var(--blue); color: #fff; }
+  .modal-body {
+    padding: 20px 24px 24px;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+  }
+  .modal-section { margin-bottom: 22px; }
+  .modal-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .builder-seg {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid var(--line-soft);
+    border-left: 4px solid var(--blue);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  .builder-seg-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .builder-seg-name { font-weight: 700; font-size: 15px; }
+  .builder-q-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .builder-q-row:hover { background: var(--blue-tint); }
+  .builder-q-row + .builder-q-row { border-top: 1px dashed var(--line); }
+  .builder-q-pick {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .builder-q-pick:hover { background: var(--blue-tint); }
+  .builder-igqa-pick {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .builder-igqa-pick input { width: auto; }
+
+  /* ---------- RECORD MODE OVERLAY ---------- */
+  .rec-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0b1730;
+    color: #fff;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 18px 22px 80px;
+  }
+  .rec-overlay.active { display: block; }
+  body.recording { overflow: hidden; }
+  .rec-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #2a3a5e;
+    margin-bottom: 18px;
+  }
+  .rec-guest { font-size: 26px; font-weight: 800; }
+  .rec-topic { font-size: 15px; opacity: 0.8; margin-top: 2px; }
+  .rec-timer {
+    font-size: 36px;
+    font-weight: 700;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: #122448;
+    padding: 6px 18px;
+    border-radius: 10px;
+    border: 1px solid #2a3a5e;
+  }
+  .rec-timer.over { color: #ff8b6a; border-color: #ff8b6a; }
+  .rec-timer.warn { color: #ffd56a; }
+  .rec-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rec-controls button {
+    background: #122448;
+    color: #fff;
+    border: 1px solid #2a3a5e;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .rec-controls button:hover { background: #1c3061; }
+  .rec-controls .end { background: #c0392b; border-color: #c0392b; }
+  .rec-controls .end:hover { background: #8e2820; }
+  .rec-controls .close { background: transparent; }
+  .rec-body {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 900px) { .rec-body { grid-template-columns: 1fr; } }
+  .rec-section-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin: 0 0 8px 0;
+  }
+  .rec-segment {
+    background: #122448;
+    border-left: 4px solid var(--blue-light);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .rec-segment h4 {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .rec-segment-note { opacity: 0.75; font-size: 14px; margin-bottom: 8px; }
+  .rec-q {
+    background: #1a2c54;
+    border: 1px solid #2a3a5e;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin: 6px 0;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+  }
+  .rec-q:hover { background: #223568; }
+  .rec-q.asked {
+    opacity: 0.4;
+    text-decoration: line-through;
+    background: #0e1c3c;
+  }
+  .rec-q .asked-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid #4a5878;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .rec-q.asked .asked-check {
+    background: #1a8a4a;
+    border-color: #1a8a4a;
+    color: #fff;
+  }
+  .rec-side {
+    background: #122448;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .rec-side h3 { margin: 0 0 10px 0; font-size: 16px; color: #fff; }
+  .rec-igqa-item {
+    background: #1a2c54;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .rec-igqa-item:hover { background: #223568; }
+  .rec-igqa-item.asked { opacity: 0.45; text-decoration: line-through; }
+  .rec-notes {
+    width: 100%;
+    min-height: 130px;
+    background: #1a2c54;
+    color: #fff;
+    border: 1px solid #2a3a5e;
+    border-radius: 6px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .rec-info {
+    background: #122448;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    font-size: 14px;
+  }
+  .rec-info div { margin: 4px 0; }
+  .rec-info .label { opacity: 0.6; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+
+  @media (max-width: 600px) {
+    main { padding: 14px; }
+    .brand-title { font-size: 17px; }
+    nav button { padding: 12px 12px; font-size: 13px; }
+    .rec-guest { font-size: 20px; }
+    .rec-timer { font-size: 26px; padding: 4px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-logo">ABC+</div>
+    <div>
+      <div class="brand-title">ABC Podcast</div>
+      <div class="brand-sub">Anesthesia Business Chat</div>
+    </div>
+  </div>
+  <div class="small" style="color:#fff;opacity:.85">15 min · weekly · Riverside</div>
+</header>
+
+<nav>
+  <button data-tab="dashboard" class="active">Dashboard</button>
+  <button data-tab="dreams">Dream Guests</button>
+  <button data-tab="schedule">Schedule</button>
+  <button data-tab="episodes">Episodes</button>
+  <button data-tab="questions">Question Pool</button>
+  <button data-tab="igqa">IG Q&amp;A</button>
+  <button data-tab="export">Calendar Export</button>
+</nav>
+
+<main>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="tab active">
+  <h2>Dashboard</h2>
+  <div id="countdown-area"></div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>Upcoming episodes</h3>
+      <div id="dash-upcoming"></div>
+    </div>
+    <div class="card">
+      <h3>Quick stats</h3>
+      <div id="dash-stats"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row row-between" style="margin-bottom:8px">
+      <h3 style="margin:0">Quick notes</h3>
+      <span class="muted small">Capture ideas fast — sort them later</span>
+    </div>
+    <p class="muted" style="margin-top:0">Random questions, episode ideas, things to remember. Hit Enter to add.</p>
+    <div class="row" style="gap:8px;margin-bottom:14px">
+      <input type="text" id="note-text" placeholder="What's the idea?" onkeydown="if(event.key==='Enter')addNote()" style="flex:1" />
+      <button class="btn" onclick="addNote()">Add note</button>
+    </div>
+    <div id="notes-list"></div>
+  </div>
+</section>
+
+<!-- DREAM GUESTS -->
+<section id="dreams" class="tab">
+  <h2>Dream guests</h2>
+  <p class="muted">Wish list of people you'd love to have on the show. When you're ready, click "Schedule now" to auto-fill the schedule form.</p>
+
+  <div class="card">
+    <h3>Add a dream guest</h3>
+    <div class="grid grid-2">
+      <div>
+        <label>Name</label>
+        <input type="text" id="d-name" placeholder="Dr. Jane Smith, CRNA" />
+      </div>
+      <div>
+        <label>Role / what they do</label>
+        <input type="text" id="d-role" placeholder="CRNA entrepreneur, SRNA podcaster..." />
+      </div>
+      <div>
+        <label>Instagram handle</label>
+        <input type="text" id="d-ig" placeholder="@username" />
+      </div>
+      <div>
+        <label>Other contact (email / phone)</label>
+        <input type="text" id="d-contact" placeholder="email or other" />
+      </div>
+      <div>
+        <label>Status</label>
+        <select id="d-status">
+          <option value="idea">Idea — haven't reached out</option>
+          <option value="contacted">Contacted — waiting on reply</option>
+          <option value="passed">Passed / not now</option>
+        </select>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn" onclick="addDreamGuest()">Add to dream list</button>
+    </div>
+  </div>
+
+  <div class="segment-tabs" id="dream-filter"></div>
+  <div id="dreams-list"></div>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule" class="tab">
+  <h2>Schedule a guest call</h2>
+  <div class="card">
+    <div class="grid grid-2">
+      <div>
+        <label>Guest name</label>
+        <input type="text" id="g-name" placeholder="Dr. Jane Smith, CRNA" />
+      </div>
+      <div>
+        <label>Role / title</label>
+        <input type="text" id="g-role" placeholder="CRNA, SRNA, MD, business owner..." />
+      </div>
+      <div>
+        <label>Date &amp; time (your time — Central)</label>
+        <input type="datetime-local" id="g-when" />
+      </div>
+    </div>
+    <label style="margin-top:10px">Notes</label>
+    <textarea id="g-notes" placeholder="Talking points, links, anything to remember..."></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" onclick="addEpisode()">Add to schedule</button>
+      <span class="muted">Riverside link can go in notes</span>
+    </div>
+  </div>
+
+  <h3>Scheduled calls</h3>
+  <div id="schedule-list"></div>
+</section>
+
+<!-- EPISODES -->
+<section id="episodes" class="tab">
+  <h2>Episode outlines</h2>
+  <p class="muted">Build the run-of-show for each recorded episode. Pick segments and pull questions from your pool.</p>
+  <div id="episodes-list"></div>
+</section>
+
+<!-- QUESTIONS -->
+<section id="questions" class="tab">
+  <h2>Question pool</h2>
+  <p class="muted">Build a bank of questions per segment so you're always prepared. Mark questions used after you ask them.</p>
+
+  <div class="card">
+    <h3>Add a question</h3>
+    <div class="row" style="gap:10px">
+      <select id="q-segment" style="max-width:200px">
+        <option value="fun-preshow">Fun pre-show</option>
+        <option value="business">Business</option>
+        <option value="med">Med segment</option>
+        <option value="case-review">Case review</option>
+        <option value="preceptor-rant">Preceptor rant</option>
+        <option value="reaction">Reaction</option>
+        <option value="giveaway">Giveaway</option>
+        <option value="tip-line">Anonymous tip line</option>
+        <option value="general">General</option>
+      </select>
+      <input type="text" id="q-text" placeholder="Type the question..." style="flex:1;min-width:200px" />
+      <button class="btn" onclick="addQuestion()">Add</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div class="checkbox-line">
+        <input type="checkbox" id="q-targets-students" />
+        <label for="q-targets-students" style="margin:0">For students</label>
+      </div>
+      <div class="checkbox-line">
+        <input type="checkbox" id="q-targets-crnas" />
+        <label for="q-targets-crnas" style="margin:0">For CRNAs</label>
+      </div>
+      <div class="checkbox-line">
+        <input type="checkbox" id="q-targets-business" />
+        <label for="q-targets-business" style="margin:0">Business angle</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="segment-tabs" id="segment-filter"></div>
+  <div id="questions-list"></div>
+</section>
+
+<!-- IG Q&A -->
+<section id="igqa" class="tab">
+  <h2>Instagram Q&amp;A inbox</h2>
+  <p class="muted">Paste questions you collect from IG stories. Mark them used when read on the show.</p>
+  <div class="card">
+    <label>Question</label>
+    <textarea id="iq-text" placeholder="What's the question?"></textarea>
+    <div class="grid grid-2" style="margin-top:8px">
+      <div>
+        <label>Asked by (handle)</label>
+        <input type="text" id="iq-by" placeholder="@username (optional)" />
+      </div>
+      <div>
+        <label>Date received</label>
+        <input type="date" id="iq-date" />
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="addIgQa()">Add Q&amp;A</button>
+    </div>
+  </div>
+  <div id="igqa-list"></div>
+</section>
+
+<!-- EXPORT -->
+<section id="export" class="tab">
+  <h2>Google Calendar export</h2>
+  <div class="card">
+    <p>Click below to download an <code>.ics</code> file with all your scheduled calls.</p>
+    <div class="row">
+      <button class="btn" onclick="downloadIcs()">Download abc-podcast.ics</button>
+      <button class="btn btn-ghost" onclick="copyIcs()">Copy .ics text to clipboard</button>
+    </div>
+  </div>
+
+  <div class="card instructions">
+    <h3 style="margin-top:0">One-time setup for auto-syncing subscribable feed</h3>
+    <p>To have new episodes appear in Google Calendar automatically, host the <code>.ics</code> file at a stable URL (free with GitHub Pages):</p>
+    <ol>
+      <li>Create a new <strong>public</strong> GitHub repo (e.g. <code>abc-podcast-calendar</code>).</li>
+      <li>Upload <code>abc-podcast.ics</code> to the repo's root.</li>
+      <li>In repo Settings → Pages, enable Pages from the <code>main</code> branch.</li>
+      <li>Your file will be at: <code>https://&lt;your-github-username&gt;.github.io/abc-podcast-calendar/abc-podcast.ics</code></li>
+      <li>In Google Calendar, click <strong>+</strong> next to "Other calendars" → <strong>From URL</strong> → paste the URL above.</li>
+    </ol>
+    <p><strong>Each time you update the schedule:</strong> re-download the <code>.ics</code> and replace it in the GitHub repo. Google Calendar polls roughly every 24h. (For instant updates on your own calendar, just use the per-event "Add to Google Calendar" link on each scheduled call.)</p>
+  </div>
+
+  <div class="card">
+    <h3>Backup / restore data</h3>
+    <p class="muted">Everything saves in your browser. Export a JSON backup just in case.</p>
+    <div class="row">
+      <button class="btn btn-ghost" onclick="exportData()">Export backup (JSON)</button>
+      <label class="btn btn-ghost" style="cursor:pointer;display:inline-block">
+        Import backup
+        <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importData(event)" />
+      </label>
+      <button class="btn btn-danger btn-sm" onclick="resetAll()">Reset all data</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="sync-status" class="sync-status" title="Cloud sync"></div>
+
+<!-- RECORD MODE OVERLAY -->
+<div class="rec-overlay" id="rec-overlay">
+  <div class="rec-topbar">
+    <div>
+      <div class="rec-guest" id="rec-guest">Guest</div>
+      <div class="rec-topic" id="rec-topic"></div>
+    </div>
+    <div class="rec-timer" id="rec-timer">00:00</div>
+    <div class="rec-controls">
+      <button onclick="recToggleTimer()" id="rec-timer-btn">⏸ Pause</button>
+      <button onclick="recResetTimer()">↺ Reset</button>
+      <button class="end" onclick="recEnd()">End recording</button>
+      <button class="close" onclick="recClose()">Close</button>
+    </div>
+  </div>
+  <div class="rec-body">
+    <div>
+      <div class="rec-section-title">Run of show — click a question after you ask it</div>
+      <div id="rec-segments"></div>
+    </div>
+    <div>
+      <div class="rec-info" id="rec-info"></div>
+      <div class="rec-side">
+        <h3>IG Q&amp;As</h3>
+        <div id="rec-igqas"></div>
+      </div>
+      <div class="rec-side">
+        <h3>Live notes</h3>
+        <textarea class="rec-notes" id="rec-notes" placeholder="Jot anything during the recording — auto-saves" oninput="recSaveNotes(this.value)"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EPISODE BUILDER MODAL -->
+<div class="modal-backdrop" id="builder-modal" onclick="if(event.target===this)closeBuilder()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2 id="builder-title">Episode</h2>
+        <div class="sub" id="builder-sub"></div>
+      </div>
+      <button class="modal-close" onclick="closeBuilder()" title="Close">×</button>
+    </div>
+    <div class="modal-body" id="builder-body"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeELzgUYKgFUWYEu5FY560xfPWmrti8uY",
+    authDomain: "abc-podcast-790e9.firebaseapp.com",
+    projectId: "abc-podcast-790e9",
+    storageBucket: "abc-podcast-790e9.firebasestorage.app",
+    messagingSenderId: "470484550682",
+    appId: "1:470484550682:web:8f6ad8d01342f5a9e63da3"
+  };
+
+  let saveTimer = null;
+  try {
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getFirestore(fbApp);
+    const stateRef = doc(db, "app", "main");
+
+    window.__fb = {
+      ready: true,
+      save: (state) => {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          window.__setSync && window.__setSync('syncing');
+          setDoc(stateRef, { state, updatedAt: Date.now() })
+            .then(() => window.__setSync && window.__setSync('synced'))
+            .catch(e => {
+              console.error("Firebase save error:", e);
+              window.__setSync && window.__setSync('error');
+            });
+        }, 250);
+      },
+      load: async () => {
+        try {
+          const snap = await getDoc(stateRef);
+          return snap.exists() ? snap.data().state : null;
+        } catch (e) {
+          console.error("Firebase load error:", e);
+          return null;
+        }
+      },
+      listen: (cb) => onSnapshot(stateRef,
+        (snap) => { if (snap.exists()) cb(snap.data().state); },
+        (err) => console.error("Firebase listen error:", err)
+      )
+    };
+  } catch (e) {
+    console.error("Firebase init failed:", e);
+    window.__fb = { ready: false };
+  }
+  window.dispatchEvent(new CustomEvent('firebase-ready'));
+</script>
+
+<script>
+// =========================================================================
+// DATA & STORAGE
+// =========================================================================
+const SEGMENTS = {
+  'fun-preshow':    { label: 'Fun pre-show',       color: '#9b59b6' },
+  'business':       { label: 'Business',           color: '#1e4ca3' },
+  'med':            { label: 'Med segment',        color: '#1a8a4a' },
+  'case-review':    { label: 'Case review',        color: '#c98a1d' },
+  'preceptor-rant': { label: 'Preceptor rant',     color: '#c0392b' },
+  'reaction':       { label: 'Reaction',           color: '#16a3a3' },
+  'giveaway':       { label: 'Giveaway',           color: '#e67e22' },
+  'tip-line':       { label: 'Anonymous tip line', color: '#34495e' },
+  'general':        { label: 'General',            color: '#7f8c8d' },
+};
+
+const STARTER_QUESTIONS = [
+  // Fun pre-show
+  { segment: 'fun-preshow', text: 'Coffee or energy drink before a case — and what brand?' },
+  { segment: 'fun-preshow', text: 'Most embarrassing moment in clinical so far?' },
+  { segment: 'fun-preshow', text: 'One song you have to hear before you walk into the OR?' },
+  { segment: 'fun-preshow', text: 'Scrub cap or surgical hat — and why is it controversial?' },
+  { segment: 'fun-preshow', text: "Favorite snack you stash for long cases?" },
+  { segment: 'fun-preshow', text: "If you weren't doing anesthesia, what would you be doing?" },
+  // Business
+  { segment: 'business', text: "What's the smartest financial move you made early in your CRNA career?" },
+  { segment: 'business', text: 'W2 vs 1099 — when does each make sense?' },
+  { segment: 'business', text: 'Walk us through negotiating your last contract.' },
+  { segment: 'business', text: 'How are you investing for retirement right now?' },
+  { segment: 'business', text: 'Biggest money mistake you made as a new grad?' },
+  { segment: 'business', text: 'How do you set your day rate as a locum?' },
+  // Med
+  { segment: 'med', text: 'A drug you wish more people used — and why?' },
+  { segment: 'med', text: 'Your go-to induction for a difficult airway?' },
+  { segment: 'med', text: 'New technique you picked up this year?' },
+  { segment: 'med', text: 'Best regional block tip you give SRNAs?' },
+  { segment: 'med', text: 'How do you approach the hemodynamically unstable patient?' },
+  // Case review
+  { segment: 'case-review', text: 'Walk us through the case from pre-op to recovery.' },
+  { segment: 'case-review', text: 'What was the turning point during the case?' },
+  { segment: 'case-review', text: 'What would you do differently next time?' },
+  { segment: 'case-review', text: 'How did the team communicate during the critical moment?' },
+  // Preceptor rant
+  { segment: 'preceptor-rant', text: "What's the worst preceptor experience you've had?" },
+  { segment: 'preceptor-rant', text: 'What makes a great preceptor in your eyes?' },
+  { segment: 'preceptor-rant', text: 'A preceptor who changed your career — what did they do differently?' },
+  { segment: 'preceptor-rant', text: 'Red flags SRNAs should watch for at a clinical site.' },
+  { segment: 'preceptor-rant', text: 'Advice for an SRNA stuck with a tough preceptor next week?' },
+  // Reaction
+  { segment: 'reaction', text: 'React to this trending anesthesia post / clip — what stands out?' },
+  // Giveaway
+  { segment: 'giveaway', text: 'This week\'s giveaway — how do listeners enter?' },
+];
+
+const DEFAULT_STATE = {
+  episodes: [],   // { id, title, guest, role, contact, topic, scheduledAt, durationMin, status, notes, segments: [{segment, questionIds:[], note}] }
+  questions: [],  // { id, segment, text, used, tags: [students, crnas, business] }
+  igqa: [],       // { id, text, askedBy, date, used }
+  dreams: [],     // { id, name, role, contact, why, notes, status: 'idea'|'contacted'|'scheduled'|'passed', addedAt }
+  notes: [],      // { id, text, createdAt }
+  segmentFilter: 'all',
+  dreamFilter: 'active',
+  seeded: false,
+};
+
+let state = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem('abc-podcast');
+    if (!raw) return seed();
+    const parsed = JSON.parse(raw);
+    return { ...DEFAULT_STATE, ...parsed };
+  } catch (e) {
+    return seed();
+  }
+}
+
+function seed() {
+  const s = { ...DEFAULT_STATE, seeded: true };
+  s.questions = STARTER_QUESTIONS.map(q => ({
+    id: uid(),
+    segment: q.segment,
+    text: q.text,
+    used: false,
+    tags: [],
+  }));
+  return s;
+}
+
+function save() {
+  localStorage.setItem('abc-podcast', JSON.stringify(state));
+  if (window.__fb && window.__fb.ready) {
+    window.__fb.save(state);
+  }
+}
+
+function setSyncStatus(s) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.className = 'sync-status ' + s;
+  const labels = { synced: 'Synced', syncing: 'Syncing…', error: 'Sync error', offline: 'Offline (local only)' };
+  el.textContent = labels[s] || '';
+}
+window.__setSync = setSyncStatus;
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+// =========================================================================
+// TAB SWITCHING
+// =========================================================================
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.onclick = () => switchTab(btn.dataset.tab);
+});
+function switchTab(name) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.id === name));
+  renderAll();
+}
+
+// =========================================================================
+// SCHEDULE
+// =========================================================================
+function addEpisode() {
+  const name = document.getElementById('g-name').value.trim();
+  const role = document.getElementById('g-role').value.trim();
+  const when = document.getElementById('g-when').value;
+  const notes = document.getElementById('g-notes').value.trim();
+
+  if (!name || !when) {
+    alert('Please enter at least a guest name and date/time.');
+    return;
+  }
+
+  state.episodes.push({
+    id: uid(),
+    title: `Episode with ${name}`,
+    guest: name,
+    role,
+    contact: '',
+    topic: '',
+    scheduledAt: when,
+    durationMin: 15,
+    status: 'scheduled',
+    notes,
+    segments: [],
+    igQuestionIds: [],
+  });
+
+  ['g-name','g-role','g-when','g-notes'].forEach(id => document.getElementById(id).value = '');
+  save();
+  renderAll();
+  alert('Added! Check the Schedule list below.');
+}
+
+function deleteEpisode(id) {
+  if (!confirm('Delete this scheduled call? This cannot be undone.')) return;
+  state.episodes = state.episodes.filter(e => e.id !== id);
+  save();
+  renderAll();
+}
+
+function updateEpisodeStatus(id, status) {
+  const ep = state.episodes.find(e => e.id === id);
+  if (ep) { ep.status = status; save(); renderAll(); }
+}
+
+function renderSchedule() {
+  const sorted = [...state.episodes].sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+  const list = document.getElementById('schedule-list');
+  if (sorted.length === 0) {
+    list.innerHTML = '<div class="empty">No scheduled calls yet. Add your first guest above.</div>';
+    return;
+  }
+  list.innerHTML = sorted.map(ep => {
+    const d = new Date(ep.scheduledAt);
+    const gcalUrl = makeGoogleCalUrl(ep);
+    const statusPill = ep.status === 'scheduled' ? 'pill-warn' : ep.status === 'recorded' ? 'pill-blue' : 'pill-ok';
+    return `
+      <div class="episode-item">
+        <div class="episode-header">
+          <div>
+            <h3 style="margin:0">${escapeHtml(ep.title)}</h3>
+            <div class="muted" style="margin-top:4px">${escapeHtml(ep.guest)}${ep.role ? ' · ' + escapeHtml(ep.role) : ''}</div>
+          </div>
+          <div class="row" style="gap:6px">
+            <span class="pill ${statusPill}">${ep.status}</span>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div><strong>📅</strong> ${formatDateTime(d)} (${ep.durationMin} min)</div>
+          ${ep.contact ? `<div><strong>✉️</strong> ${escapeHtml(ep.contact)}</div>` : ''}
+          ${ep.notes ? `<div class="muted" style="margin-top:6px">${escapeHtml(ep.notes)}</div>` : ''}
+        </div>
+        <div class="row" style="margin-top:12px;gap:6px">
+          <button class="btn btn-sm" onclick="openBuilder('${ep.id}')">📝 Build outline</button>
+          <button class="btn btn-sm" style="background:#c0392b" onclick="startRecording('${ep.id}')">🔴 Record mode</button>
+          <a class="btn btn-sm btn-ghost" target="_blank" href="${gcalUrl}">Add to Google Calendar</a>
+          <select class="btn-sm" style="padding:5px" onchange="updateEpisodeStatus('${ep.id}', this.value)">
+            <option value="scheduled" ${ep.status==='scheduled'?'selected':''}>Scheduled</option>
+            <option value="recorded" ${ep.status==='recorded'?'selected':''}>Recorded</option>
+            <option value="published" ${ep.status==='published'?'selected':''}>Published</option>
+          </select>
+          <button class="btn btn-sm btn-danger" onclick="deleteEpisode('${ep.id}')">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function goToEpisode(id) {
+  switchTab('episodes');
+  setTimeout(() => {
+    const el = document.getElementById('ep-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+// =========================================================================
+// EPISODES (outlines)
+// =========================================================================
+function renderEpisodes() {
+  const list = document.getElementById('episodes-list');
+  const sorted = [...state.episodes].sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+  if (sorted.length === 0) {
+    list.innerHTML = '<div class="empty">No episodes yet. Add a guest in the Schedule tab.</div>';
+    return;
+  }
+  list.innerHTML = sorted.map(ep => renderEpisodeOutline(ep)).join('');
+}
+
+function renderEpisodeOutline(ep) {
+  const d = new Date(ep.scheduledAt);
+  const segs = ep.segments || [];
+  const igCount = (ep.igQuestionIds || []).length;
+  const totalQs = segs.reduce((sum, s) => sum + (s.questionIds || []).length, 0);
+  const statusPillClass = ep.status === 'scheduled' ? 'pill-warn' : ep.status === 'recorded' ? 'pill-blue' : 'pill-ok';
+
+  const segChips = segs.length === 0
+    ? '<div class="muted small" style="margin:6px 0">No segments planned yet.</div>'
+    : `<div class="row" style="gap:6px;margin:8px 0;flex-wrap:wrap">${segs.map(s => {
+        const m = SEGMENTS[s.segment] || { label: s.segment, color: '#999' };
+        const qN = (s.questionIds || []).length;
+        return `<span class="pill" style="background:${m.color}22;color:${m.color}">${m.label} · ${qN}Q</span>`;
+      }).join('')}</div>`;
+
+  return `
+    <div class="episode-item" id="ep-${ep.id}">
+      <div class="episode-header">
+        <div>
+          <h3 style="margin:0">${escapeHtml(ep.title)}</h3>
+          <div class="muted">${escapeHtml(ep.guest)} · ${formatDateTime(d)}</div>
+        </div>
+        <span class="pill ${statusPillClass}">${ep.status}</span>
+      </div>
+      ${segChips}
+      <div class="muted small">${segs.length} segment${segs.length===1?'':'s'} · ${totalQs} question${totalQs===1?'':'s'} · ${igCount} IG Q&amp;A${igCount===1?'':'s'}</div>
+      <div class="row" style="margin-top:12px;gap:6px">
+        <button class="btn btn-sm" onclick="openBuilder('${ep.id}')">📝 Build outline</button>
+        <button class="btn btn-sm" style="background:#c0392b" onclick="startRecording('${ep.id}')">🔴 Record mode</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteEpisode('${ep.id}')">Delete</button>
+      </div>
+    </div>
+  `;
+}
+
+function addSegmentToEpisode(epId) {
+  const select = document.getElementById('seg-' + epId);
+  const segType = select.value;
+  const ep = state.episodes.find(e => e.id === epId);
+  if (!ep) return;
+  ep.segments = ep.segments || [];
+  ep.segments.push({ segment: segType, questionIds: [], note: '' });
+  save();
+  renderAll();
+}
+
+function removeSegment(epId, idx) {
+  const ep = state.episodes.find(e => e.id === epId);
+  if (!ep) return;
+  ep.segments.splice(idx, 1);
+  save();
+  renderAll();
+}
+
+function addQuestionToSegment(epId, idx) {
+  const select = document.getElementById(`addq-${epId}-${idx}`);
+  const qid = select.value;
+  const ep = state.episodes.find(e => e.id === epId);
+  if (!ep || !ep.segments[idx]) return;
+  ep.segments[idx].questionIds = ep.segments[idx].questionIds || [];
+  ep.segments[idx].questionIds.push(qid);
+  save();
+  renderAll();
+}
+
+function removeQuestionFromSegment(epId, idx, qid) {
+  const ep = state.episodes.find(e => e.id === epId);
+  if (!ep || !ep.segments[idx]) return;
+  ep.segments[idx].questionIds = ep.segments[idx].questionIds.filter(x => x !== qid);
+  save();
+  renderAll();
+}
+
+// =========================================================================
+// QUESTIONS
+// =========================================================================
+function addQuestion() {
+  const seg = document.getElementById('q-segment').value;
+  const text = document.getElementById('q-text').value.trim();
+  if (!text) return;
+  const tags = [];
+  if (document.getElementById('q-targets-students').checked) tags.push('students');
+  if (document.getElementById('q-targets-crnas').checked) tags.push('crnas');
+  if (document.getElementById('q-targets-business').checked) tags.push('business');
+  state.questions.push({ id: uid(), segment: seg, text, used: false, tags });
+  document.getElementById('q-text').value = '';
+  ['q-targets-students','q-targets-crnas','q-targets-business'].forEach(id => document.getElementById(id).checked = false);
+  save();
+  renderQuestions();
+}
+
+function toggleQuestionUsed(id) {
+  const q = state.questions.find(x => x.id === id);
+  if (!q) return;
+  q.used = !q.used;
+  save();
+  renderQuestions();
+}
+
+function deleteQuestion(id) {
+  if (!confirm('Delete this question?')) return;
+  state.questions = state.questions.filter(q => q.id !== id);
+  // also remove from any episode segments
+  state.episodes.forEach(ep => {
+    (ep.segments || []).forEach(seg => {
+      seg.questionIds = (seg.questionIds || []).filter(x => x !== id);
+    });
+  });
+  save();
+  renderAll();
+}
+
+function renderQuestions() {
+  const filterEl = document.getElementById('segment-filter');
+  const filters = ['all', ...Object.keys(SEGMENTS)];
+  filterEl.innerHTML = filters.map(f => {
+    const label = f === 'all' ? `All (${state.questions.length})` : `${SEGMENTS[f].label} (${state.questions.filter(q=>q.segment===f).length})`;
+    return `<button class="${state.segmentFilter===f?'active':''}" onclick="setSegmentFilter('${f}')">${label}</button>`;
+  }).join('');
+
+  const list = document.getElementById('questions-list');
+  const filtered = state.segmentFilter === 'all'
+    ? state.questions
+    : state.questions.filter(q => q.segment === state.segmentFilter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">No questions in this segment yet. Add one above.</div>';
+    return;
+  }
+
+  // group by segment for "all" view
+  const groups = {};
+  filtered.forEach(q => {
+    groups[q.segment] = groups[q.segment] || [];
+    groups[q.segment].push(q);
+  });
+
+  list.innerHTML = Object.keys(groups).map(segKey => {
+    const meta = SEGMENTS[segKey] || { label: segKey, color: '#999' };
+    return `
+      <div class="card" style="border-left:4px solid ${meta.color}">
+        <h3 style="color:${meta.color}">${meta.label} <span class="muted" style="font-weight:400;font-size:13px">(${groups[segKey].length})</span></h3>
+        ${groups[segKey].map(q => `
+          <div class="question-item" style="${q.used?'opacity:0.5':''}">
+            <div class="row row-between">
+              <div style="flex:1">
+                <div>${escapeHtml(q.text)}</div>
+                ${q.tags && q.tags.length ? `<div style="margin-top:4px">${q.tags.map(t=>`<span class="pill pill-grey">${t}</span>`).join(' ')}</div>` : ''}
+              </div>
+              <div class="row" style="gap:6px">
+                <button class="btn btn-sm ${q.used?'btn-ghost':''}" onclick="toggleQuestionUsed('${q.id}')">${q.used?'Mark unused':'Mark used'}</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteQuestion('${q.id}')">Delete</button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+function setSegmentFilter(f) {
+  state.segmentFilter = f;
+  save();
+  renderQuestions();
+}
+
+// =========================================================================
+// IG Q&A
+// =========================================================================
+function addIgQa() {
+  const text = document.getElementById('iq-text').value.trim();
+  const by = document.getElementById('iq-by').value.trim();
+  const date = document.getElementById('iq-date').value || new Date().toISOString().slice(0,10);
+  if (!text) return;
+  state.igqa.push({ id: uid(), text, askedBy: by, date, used: false });
+  document.getElementById('iq-text').value = '';
+  document.getElementById('iq-by').value = '';
+  document.getElementById('iq-date').value = '';
+  save();
+  renderIgQa();
+}
+
+function toggleIgQaUsed(id) {
+  const q = state.igqa.find(x => x.id === id);
+  if (!q) return;
+  q.used = !q.used;
+  save();
+  renderIgQa();
+}
+
+function deleteIgQa(id) {
+  if (!confirm('Delete this Q&A?')) return;
+  state.igqa = state.igqa.filter(q => q.id !== id);
+  save();
+  renderIgQa();
+}
+
+function renderIgQa() {
+  const list = document.getElementById('igqa-list');
+  const sorted = [...state.igqa].sort((a, b) => (a.used - b.used) || new Date(b.date) - new Date(a.date));
+  if (sorted.length === 0) {
+    list.innerHTML = '<div class="empty">No Q&A yet. Collect questions from your Instagram stories and paste them here.</div>';
+    return;
+  }
+  list.innerHTML = sorted.map(q => `
+    <div class="qa-item" style="${q.used?'opacity:0.55':''}">
+      <div class="row row-between">
+        <div style="flex:1">
+          <div>${escapeHtml(q.text)}</div>
+          <div class="muted small" style="margin-top:4px">
+            ${q.askedBy ? escapeHtml(q.askedBy) + ' · ' : ''}${q.date}
+          </div>
+        </div>
+        <div class="row" style="gap:6px">
+          <button class="btn btn-sm ${q.used?'btn-ghost':''}" onclick="toggleIgQaUsed('${q.id}')">${q.used?'Mark unused':'Mark used'}</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteIgQa('${q.id}')">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// =========================================================================
+// DASHBOARD
+// =========================================================================
+// =========================================================================
+// RECORD MODE
+// =========================================================================
+let recEpId = null;
+let recStartTime = null;
+let recElapsedBeforePause = 0;
+let recTimerInterval = null;
+let recPaused = false;
+
+function startRecording(epId) {
+  const ep = state.episodes.find(e => e.id === epId);
+  if (!ep) return;
+  recEpId = epId;
+  recStartTime = Date.now();
+  recElapsedBeforePause = 0;
+  recPaused = false;
+  document.getElementById('rec-overlay').classList.add('active');
+  document.body.classList.add('recording');
+  document.getElementById('rec-guest').textContent = ep.guest || ep.title || 'Guest';
+  document.getElementById('rec-topic').textContent = ep.title || '';
+  document.getElementById('rec-notes').value = ep.liveNotes || '';
+  document.getElementById('rec-timer-btn').textContent = '⏸ Pause';
+  recRenderInfo();
+  recRender();
+  recTick();
+  recTimerInterval = setInterval(recTick, 1000);
+}
+
+function recElapsedSec() {
+  if (recPaused) return Math.floor(recElapsedBeforePause / 1000);
+  return Math.floor((recElapsedBeforePause + (Date.now() - recStartTime)) / 1000);
+}
+
+function recTick() {
+  const sec = recElapsedSec();
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  const el = document.getElementById('rec-timer');
+  el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  el.classList.remove('warn', 'over');
+  if (sec >= 20 * 60) el.classList.add('over');
+  else if (sec >= 15 * 60) el.classList.add('warn');
+}
+
+function recToggleTimer() {
+  if (recPaused) {
+    recStartTime = Date.now();
+    recPaused = false;
+    document.getElementById('rec-timer-btn').textContent = '⏸ Pause';
+  } else {
+    recElapsedBeforePause += Date.now() - recStartTime;
+    recPaused = true;
+    document.getElementById('rec-timer-btn').textContent = '▶ Resume';
+  }
+}
+
+function recResetTimer() {
+  if (!confirm('Reset the timer back to 00:00?')) return;
+  recStartTime = Date.now();
+  recElapsedBeforePause = 0;
+  recPaused = false;
+  document.getElementById('rec-timer-btn').textContent = '⏸ Pause';
+  recTick();
+}
+
+function recRenderInfo() {
+  const ep = state.episodes.find(e => e.id === recEpId);
+  if (!ep) return;
+  const d = new Date(ep.scheduledAt);
+  document.getElementById('rec-info').innerHTML = `
+    <div><span class="label">Date</span><div>${formatDateTime(d)}</div></div>
+    ${ep.role ? `<div style="margin-top:8px"><span class="label">Role</span><div>${escapeHtml(ep.role)}</div></div>` : ''}
+    ${ep.contact ? `<div style="margin-top:8px"><span class="label">Contact</span><div>${escapeHtml(ep.contact)}</div></div>` : ''}
+    ${ep.notes ? `<div style="margin-top:8px"><span class="label">Pre-show notes</span><div>${escapeHtml(ep.notes)}</div></div>` : ''}
+  `;
+}
+
+function recRender() {
+  const ep = state.episodes.find(e => e.id === recEpId);
+  if (!ep) return;
+  const segs = ep.segments || [];
+  const segWrap = document.getElementById('rec-segments');
+
+  if (segs.length === 0) {
+    segWrap.innerHTML = '<div class="rec-segment"><div class="rec-segment-note">No segments planned. Open the builder before recording to add some.</div></div>';
+  } else {
+    segWrap.innerHTML = segs.map((seg, idx) => {
+      const meta = SEGMENTS[seg.segment] || { label: seg.segment, color: '#999' };
+      const qs = (seg.questionIds || []).map(qid => state.questions.find(x => x.id === qid)).filter(Boolean);
+      const qsHtml = qs.length === 0
+        ? '<div class="rec-segment-note" style="font-style:italic">No questions in this segment</div>'
+        : qs.map(q => `
+            <div class="rec-q ${q.used ? 'asked' : ''}" onclick="recToggleAsked('${q.id}')">
+              <span>${escapeHtml(q.text)}</span>
+              <span class="asked-check">${q.used ? '✓' : ''}</span>
+            </div>
+          `).join('');
+      return `
+        <div class="rec-segment" style="border-left-color:${meta.color}">
+          <h4 style="color:#fff"><span>${meta.label}</span><span style="font-size:12px;opacity:0.6">${idx + 1}/${segs.length}</span></h4>
+          ${seg.note ? `<div class="rec-segment-note">${escapeHtml(seg.note)}</div>` : ''}
+          ${qsHtml}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // IG Q&As
+  const igIds = ep.igQuestionIds || [];
+  const igEl = document.getElementById('rec-igqas');
+  const igPicked = state.igqa.filter(q => igIds.includes(q.id));
+  if (igPicked.length === 0) {
+    igEl.innerHTML = '<div style="opacity:0.6;font-size:13px">None picked for this episode.</div>';
+  } else {
+    igEl.innerHTML = igPicked.map(q => `
+      <div class="rec-igqa-item ${q.used ? 'asked' : ''}" onclick="recToggleIgAsked('${q.id}')">
+        ${escapeHtml(q.text)}
+        ${q.askedBy ? `<div style="opacity:0.6;font-size:12px;margin-top:2px">— ${escapeHtml(q.askedBy)}</div>` : ''}
+      </div>
+    `).join('');
+  }
+}
+
+function recToggleAsked(qid) {
+  const q = state.questions.find(x => x.id === qid);
+  if (!q) return;
+  q.used = !q.used;
+  save();
+  recRender();
+}
+
+function recToggleIgAsked(qid) {
+  const q = state.igqa.find(x => x.id === qid);
+  if (!q) return;
+  q.used = !q.used;
+  save();
+  recRender();
+}
+
+function recSaveNotes(val) {
+  const ep = state.episodes.find(e => e.id === recEpId);
+  if (!ep) return;
+  ep.liveNotes = val;
+  save();
+}
+
+function recEnd() {
+  if (!confirm('End recording and mark this episode as recorded?')) return;
+  const ep = state.episodes.find(e => e.id === recEpId);
+  if (ep) {
+    ep.status = 'recorded';
+    ep.actualDurationSec = recElapsedSec();
+    save();
+  }
+  recClose();
+}
+
+function recClose() {
+  if (recTimerInterval) { clearInterval(recTimerInterval); recTimerInterval = null; }
+  document.getElementById('rec-overlay').classList.remove('active');
+  document.body.classList.remove('recording');
+  recEpId = null;
+  recStartTime = null;
+  recElapsedBeforePause = 0;
+  recPaused = false;
+  renderAll();
+}
+
+// =========================================================================
+// EPISODE BUILDER MODAL
+// =========================================================================
+let currentBuilderId = null;
+
+function openBuilder(epId) {
+  const ep = state.episodes.find(e => e.id === epId);
+  if (!ep) return;
+  currentBuilderId = epId;
+  ep.segments = ep.segments || [];
+  ep.igQuestionIds = ep.igQuestionIds || [];
+  document.getElementById('builder-title').textContent = ep.title || `Episode with ${ep.guest}`;
+  const d = new Date(ep.scheduledAt);
+  document.getElementById('builder-sub').textContent = `${ep.guest || ''} · ${formatDateTime(d)} · ${ep.durationMin || 15} min`;
+  document.getElementById('builder-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  renderBuilder();
+}
+
+function closeBuilder() {
+  document.getElementById('builder-modal').classList.remove('active');
+  document.body.style.overflow = '';
+  currentBuilderId = null;
+  renderAll();
+}
+
+function renderBuilder() {
+  if (!currentBuilderId) return;
+  const ep = state.episodes.find(e => e.id === currentBuilderId);
+  if (!ep) return;
+  const body = document.getElementById('builder-body');
+
+  const segHtml = (ep.segments || []).map((seg, idx) => {
+    const meta = SEGMENTS[seg.segment] || { label: seg.segment, color: '#999' };
+    const chosen = (seg.questionIds || []).map(qid => {
+      const q = state.questions.find(x => x.id === qid);
+      if (!q) return '';
+      return `<div class="builder-q-row">
+        <span>${escapeHtml(q.text)}</span>
+        <button class="btn btn-sm btn-ghost" onclick="builderRemoveQ(${idx}, '${qid}')">remove</button>
+      </div>`;
+    }).join('');
+    const available = state.questions.filter(q => q.segment === seg.segment && !(seg.questionIds || []).includes(q.id) && !q.used);
+    return `
+      <div class="builder-seg" style="border-left-color:${meta.color}">
+        <div class="builder-seg-head">
+          <div class="builder-seg-name" style="color:${meta.color}">${meta.label}</div>
+          <button class="btn btn-sm btn-danger" onclick="builderRemoveSeg(${idx})">Remove segment</button>
+        </div>
+        <input type="text" placeholder="Segment note (optional)" value="${escapeHtml(seg.note || '')}" oninput="builderUpdateNote(${idx}, this.value)" style="margin-bottom:8px;font-size:13px" />
+        ${chosen || '<div class="muted small" style="margin-bottom:6px;font-style:italic">No questions picked yet</div>'}
+        ${available.length > 0 ? `
+          <details style="margin-top:6px">
+            <summary style="font-size:13px">+ Add question from pool (${available.length} available)</summary>
+            <div style="margin-top:6px">
+              ${available.map(q => `<div class="builder-q-pick" onclick="builderAddQ(${idx}, '${q.id}')">＋ ${escapeHtml(q.text)}</div>`).join('')}
+            </div>
+          </details>
+        ` : '<div class="muted small">All questions for this segment are used or already added.</div>'}
+      </div>
+    `;
+  }).join('');
+
+  const availableSegments = Object.keys(SEGMENTS).filter(s => !(ep.segments || []).some(es => es.segment === s));
+  const segPicker = availableSegments.length > 0 ? `
+    <div class="row" style="margin-top:8px">
+      <select id="builder-seg-select" style="max-width:260px">
+        ${availableSegments.map(s => `<option value="${s}">${SEGMENTS[s].label}</option>`).join('')}
+      </select>
+      <button class="btn btn-sm" onclick="builderAddSeg()">+ Add segment</button>
+    </div>
+  ` : '<div class="muted small">All segment types added.</div>';
+
+  // IG Q&As
+  const igUnused = state.igqa.filter(q => !q.used);
+  const igHtml = igUnused.length === 0
+    ? '<div class="muted small">No unread IG Q&As. Add some in the IG Q&A tab.</div>'
+    : igUnused.map(q => {
+        const checked = (ep.igQuestionIds || []).includes(q.id);
+        return `<label class="builder-igqa-pick">
+          <input type="checkbox" ${checked ? 'checked' : ''} onchange="builderToggleIg('${q.id}')" />
+          <span style="flex:1">${escapeHtml(q.text)}${q.askedBy ? ` <span class="muted small">— ${escapeHtml(q.askedBy)}</span>` : ''}</span>
+        </label>`;
+      }).join('');
+
+  body.innerHTML = `
+    <div class="modal-section">
+      <div class="modal-section-title">Run of show</div>
+      ${segHtml || '<div class="muted">No segments added yet. Pick one below to start.</div>'}
+      ${segPicker}
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">IG Q&As to read on the show</div>
+      ${igHtml}
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Episode notes</div>
+      <textarea id="builder-notes" oninput="builderUpdateNotes(this.value)" placeholder="Talking points, links, anything to remember...">${escapeHtml(ep.notes || '')}</textarea>
+    </div>
+
+    <div class="row" style="justify-content:flex-end;gap:8px">
+      <button class="btn btn-ghost" onclick="closeBuilder()">Close</button>
+    </div>
+  `;
+}
+
+function builderAddSeg() {
+  const ep = state.episodes.find(e => e.id === currentBuilderId);
+  const sel = document.getElementById('builder-seg-select');
+  if (!ep || !sel) return;
+  ep.segments = ep.segments || [];
+  ep.segments.push({ segment: sel.value, questionIds: [], note: '' });
+  save();
+  renderBuilder();
+}
+
+function builderRemoveSeg(idx) {
+  const ep = state.episodes.find(e => e.id === currentBuilderId);
+  if (!ep) return;
+  ep.segments.splice(idx, 1);
+  save();
+  renderBuilder();
+}
+
+function builderAddQ(idx, qid) {
+  const ep = state.episodes.find(e => e.id === currentBuilderId);
+  if (!ep || !ep.segments[idx]) return;
+  ep.segments[idx].questionIds = ep.segments[idx].questionIds || [];
+  ep.segments[idx].questionIds.push(qid);
+  save();
+  renderBuilder();
+}
+
+function builderRemoveQ(idx, qid) {
+  const ep = state.episodes.find(e => e.id === currentBuilderId);
+  if (!ep || !ep.segments[idx]) return;
+  ep.segments[idx].questionIds = ep.segments[idx].questionIds.filter(x => x !== qid);
+  save();
+  renderBuilder();
+}
+
+function builderUpdateNote(idx, val) {
+  const ep = state.episodes.find(e => e.id === currentBuilderId);
+  if (!ep || !ep.segments[idx]) return;
+  ep.segments[idx].note = val;
+  save();
+}
+
+function builderToggleIg(qid) {
+  const ep = state.episodes.find(e => e.id === currentBuilderId);
+  if (!ep) return;
+  ep.igQuestionIds = ep.igQuestionIds || [];
+  if (ep.igQuestionIds.includes(qid)) {
+    ep.igQuestionIds = ep.igQuestionIds.filter(x => x !== qid);
+  } else {
+    ep.igQuestionIds.push(qid);
+  }
+  save();
+}
+
+function builderUpdateNotes(val) {
+  const ep = state.episodes.find(e => e.id === currentBuilderId);
+  if (!ep) return;
+  ep.notes = val;
+  save();
+}
+
+function addNote() {
+  const input = document.getElementById('note-text');
+  const text = input.value.trim();
+  if (!text) return;
+  state.notes = state.notes || [];
+  state.notes.unshift({ id: uid(), text, createdAt: new Date().toISOString() });
+  input.value = '';
+  save();
+  renderNotes();
+}
+
+function deleteNote(id) {
+  state.notes = (state.notes || []).filter(n => n.id !== id);
+  save();
+  renderNotes();
+}
+
+function noteToQuestion(id, segment) {
+  if (!segment) return;
+  const note = (state.notes || []).find(n => n.id === id);
+  if (!note) return;
+  state.questions.push({ id: uid(), segment, text: note.text, used: false, tags: [] });
+  state.notes = state.notes.filter(n => n.id !== id);
+  save();
+  renderAll();
+}
+
+function timeAgo(iso) {
+  const ms = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(ms / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  const d = Math.floor(h / 24);
+  if (d < 7) return d + 'd ago';
+  return new Date(iso).toLocaleDateString();
+}
+
+function renderNotes() {
+  const wrap = document.getElementById('notes-list');
+  if (!wrap) return;
+  const notes = state.notes || [];
+  if (notes.length === 0) {
+    wrap.innerHTML = '<div class="empty" style="padding:20px">No notes yet. Anything you jot here stays until you sort it.</div>';
+    return;
+  }
+  const segOptions = Object.keys(SEGMENTS).map(s => `<option value="${s}">${SEGMENTS[s].label}</option>`).join('');
+  wrap.innerHTML = notes.map(n => `
+    <div class="note-item">
+      <div class="note-text">${escapeHtml(n.text)}</div>
+      <div class="note-meta">
+        <span class="muted small">${timeAgo(n.createdAt)}</span>
+        <div class="row" style="gap:6px">
+          <select onchange="noteToQuestion('${n.id}', this.value); this.value=''" class="btn-sm" style="padding:4px 6px;font-size:12px">
+            <option value="">→ Move to pool…</option>
+            ${segOptions}
+          </select>
+          <button class="btn btn-sm btn-danger" onclick="deleteNote('${n.id}')">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSegmentCards() {
+  const wrap = document.getElementById('dash-segments');
+  if (!wrap) return;
+  const segDescriptions = {
+    'fun-preshow':    'Different fun warm-up question every show',
+    'business':       'Contracts, taxes, 1099/W2, investing, side hustles',
+    'med':            'Techniques, drugs, clinical pearls',
+    'case-review':    'Walk through a recent case together',
+    'preceptor-rant': 'Student stories, what makes a good/bad preceptor',
+    'reaction':       'Video-focused reaction to a clip or post',
+    'giveaway':       'Promo for sign-ups / followers',
+    'tip-line':       'Anonymous tip from a listener',
+  };
+  const order = ['fun-preshow','business','med','case-review','preceptor-rant','reaction','giveaway','tip-line'];
+  wrap.innerHTML = order.map(segKey => {
+    const meta = SEGMENTS[segKey];
+    const all = state.questions.filter(q => q.segment === segKey);
+    const fresh = all.filter(q => !q.used);
+    const used = all.length - fresh.length;
+    // find last episode that used this segment
+    const epsWithSeg = state.episodes
+      .filter(e => (e.segments || []).some(s => s.segment === segKey))
+      .sort((a, b) => new Date(b.scheduledAt) - new Date(a.scheduledAt));
+    const lastUsed = epsWithSeg[0];
+    const featured = fresh[Math.floor(Math.random() * fresh.length)];
+    return `
+      <div class="seg-card" style="border-left-color:${meta.color}" onclick="openSegmentInPool('${segKey}')">
+        <h4 style="color:${meta.color}">${meta.label}</h4>
+        <div class="seg-desc">${segDescriptions[segKey] || ''}</div>
+        <div class="seg-stats">
+          <span><b>${fresh.length}</b> fresh</span>
+          <span class="muted">·</span>
+          <span><b>${used}</b> used</span>
+        </div>
+        <div class="muted small">${lastUsed ? 'Last in: ' + escapeHtml(lastUsed.guest || lastUsed.title) : 'Never used yet'}</div>
+        ${featured ? `<div class="seg-fresh-q">"${escapeHtml(featured.text)}"</div>` : `<div class="seg-empty">No fresh questions — add some!</div>`}
+      </div>
+    `;
+  }).join('');
+}
+
+function openSegmentInPool(segKey) {
+  state.segmentFilter = segKey;
+  save();
+  switchTab('questions');
+}
+
+function renderDashboard() {
+  const upcoming = state.episodes
+    .filter(e => new Date(e.scheduledAt) > new Date() && e.status !== 'published')
+    .sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+
+  const next = upcoming[0];
+  const cd = document.getElementById('countdown-area');
+  if (next) {
+    const ms = new Date(next.scheduledAt) - new Date();
+    const days = Math.floor(ms / (1000*60*60*24));
+    const hours = Math.floor((ms / (1000*60*60)) % 24);
+    cd.innerHTML = `
+      <div class="countdown">
+        <div class="small" style="opacity:.9;text-transform:uppercase;letter-spacing:1px">Next recording</div>
+        <div class="big">${escapeHtml(next.guest)}</div>
+        <div>${formatDateTime(new Date(next.scheduledAt))}</div>
+        <div style="margin-top:10px;font-size:18px;font-weight:600">
+          ${days > 0 ? days + ' day' + (days===1?'':'s') + ', ' : ''}${hours} hour${hours===1?'':'s'} away
+        </div>
+      </div>
+    `;
+  } else {
+    cd.innerHTML = `<div class="card"><strong>No upcoming recordings.</strong> <a href="#" onclick="switchTab('schedule');return false">Schedule your next guest →</a></div>`;
+  }
+
+  const dashU = document.getElementById('dash-upcoming');
+  if (upcoming.length === 0) {
+    dashU.innerHTML = '<div class="muted">No upcoming episodes.</div>';
+  } else {
+    dashU.innerHTML = upcoming.slice(0, 5).map(ep => `
+      <div style="padding:8px 0;border-bottom:1px solid var(--line)">
+        <div style="font-weight:600">${escapeHtml(ep.guest)}</div>
+        <div class="muted small">${formatDateTime(new Date(ep.scheduledAt))} — ${escapeHtml(ep.title)}</div>
+      </div>
+    `).join('');
+  }
+
+  const totalQ = state.questions.length;
+  const usedQ = state.questions.filter(q => q.used).length;
+  const totalIg = state.igqa.length;
+  const usedIg = state.igqa.filter(q => q.used).length;
+  const recorded = state.episodes.filter(e => e.status === 'recorded' || e.status === 'published').length;
+  const published = state.episodes.filter(e => e.status === 'published').length;
+
+  document.getElementById('dash-stats').innerHTML = `
+    <div style="padding:6px 0"><strong>${state.episodes.length}</strong> episodes total</div>
+    <div style="padding:6px 0"><strong>${recorded}</strong> recorded · <strong>${published}</strong> published</div>
+    <div style="padding:6px 0"><strong>${totalQ - usedQ}</strong> fresh questions in pool (${totalQ} total)</div>
+    <div style="padding:6px 0"><strong>${totalIg - usedIg}</strong> unused IG Q&amp;As (${totalIg} total)</div>
+  `;
+}
+
+// =========================================================================
+// CALENDAR (.ics + Google Calendar URL)
+// =========================================================================
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function toIcsDate(d) {
+  // ICS format in UTC: YYYYMMDDTHHmmssZ
+  return d.getUTCFullYear() +
+    pad(d.getUTCMonth()+1) +
+    pad(d.getUTCDate()) + 'T' +
+    pad(d.getUTCHours()) +
+    pad(d.getUTCMinutes()) +
+    pad(d.getUTCSeconds()) + 'Z';
+}
+
+function escapeIcs(s) {
+  return (s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+}
+
+function buildIcs() {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//ABC Podcast//Anesthesia Business Chat//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'NAME:ABC Podcast Schedule',
+    'X-WR-CALNAME:ABC Podcast Schedule',
+    'X-WR-TIMEZONE:America/Chicago',
+    'REFRESH-INTERVAL;VALUE=DURATION:PT1H',
+    'X-PUBLISHED-TTL:PT1H',
+  ];
+
+  state.episodes.forEach(ep => {
+    const start = new Date(ep.scheduledAt);
+    const end = new Date(start.getTime() + (ep.durationMin || 15) * 60000);
+    const description = [
+      ep.guest ? `Guest: ${ep.guest}` : '',
+      ep.role ? `Role: ${ep.role}` : '',
+      ep.contact ? `Contact: ${ep.contact}` : '',
+      ep.notes ? `Notes: ${ep.notes}` : '',
+      'Recorded on Riverside',
+    ].filter(Boolean).join('\\n');
+
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:${ep.id}@abc-podcast`);
+    lines.push(`DTSTAMP:${toIcsDate(new Date())}`);
+    lines.push(`DTSTART:${toIcsDate(start)}`);
+    lines.push(`DTEND:${toIcsDate(end)}`);
+    lines.push(`SUMMARY:${escapeIcs('ABC Podcast: ' + (ep.guest || ep.title))}`);
+    lines.push(`DESCRIPTION:${escapeIcs(description)}`);
+    lines.push('LOCATION:Riverside');
+    lines.push('STATUS:CONFIRMED');
+    lines.push('END:VEVENT');
+  });
+
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+function downloadIcs() {
+  if (state.episodes.length === 0) {
+    alert('No episodes scheduled yet — nothing to export.');
+    return;
+  }
+  const blob = new Blob([buildIcs()], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'abc-podcast.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function copyIcs() {
+  if (state.episodes.length === 0) {
+    alert('No episodes scheduled yet.');
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(buildIcs());
+    alert('.ics text copied to clipboard');
+  } catch (e) {
+    alert('Could not copy — your browser may not allow it. Try the download button instead.');
+  }
+}
+
+function makeGoogleCalUrl(ep) {
+  const start = new Date(ep.scheduledAt);
+  const end = new Date(start.getTime() + (ep.durationMin || 15) * 60000);
+  const fmt = d => d.getUTCFullYear() + pad(d.getUTCMonth()+1) + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + '00Z';
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: 'ABC Podcast: ' + (ep.guest || ep.title),
+    dates: `${fmt(start)}/${fmt(end)}`,
+    details: [ep.role && `Role: ${ep.role}`, ep.contact && `Contact: ${ep.contact}`, ep.notes].filter(Boolean).join('\n'),
+    location: 'Riverside',
+  });
+  return 'https://calendar.google.com/calendar/render?' + params.toString();
+}
+
+// =========================================================================
+// IMPORT / EXPORT / RESET
+// =========================================================================
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `abc-podcast-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!confirm('Replace all current data with the imported file?')) return;
+      state = { ...DEFAULT_STATE, ...data };
+      save();
+      renderAll();
+      alert('Imported.');
+    } catch (err) {
+      alert('Could not read that file.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetAll() {
+  if (!confirm('Erase ALL data and start over? This cannot be undone.')) return;
+  if (!confirm('Are you sure? Last chance.')) return;
+  localStorage.removeItem('abc-podcast');
+  state = seed();
+  save();
+  renderAll();
+}
+
+// =========================================================================
+// UTILITIES
+// =========================================================================
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function formatDateTime(d) {
+  return d.toLocaleString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric',
+    year: 'numeric', hour: 'numeric', minute: '2-digit',
+  });
+}
+
+function renderAll() {
+  renderDashboard();
+  renderNotes();
+  renderSchedule();
+  renderEpisodes();
+  renderQuestions();
+  renderIgQa();
+  renderDreams();
+}
+
+// =========================================================================
+// DREAM GUESTS
+// =========================================================================
+function addDreamGuest() {
+  const name = document.getElementById('d-name').value.trim();
+  if (!name) { alert('Add at least a name.'); return; }
+  state.dreams.push({
+    id: uid(),
+    name,
+    role: document.getElementById('d-role').value.trim(),
+    ig: document.getElementById('d-ig').value.trim().replace(/^@/, ''),
+    contact: document.getElementById('d-contact').value.trim(),
+    status: document.getElementById('d-status').value,
+    addedAt: new Date().toISOString(),
+  });
+  ['d-name','d-role','d-ig','d-contact'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('d-status').value = 'idea';
+  save();
+  renderDreams();
+}
+
+function updateDreamStatus(id, status) {
+  const d = state.dreams.find(x => x.id === id);
+  if (!d) return;
+  d.status = status;
+  save();
+  renderDreams();
+}
+
+function deleteDreamGuest(id) {
+  if (!confirm('Remove this dream guest from your list?')) return;
+  state.dreams = state.dreams.filter(d => d.id !== id);
+  save();
+  renderDreams();
+}
+
+function scheduleDreamGuest(id) {
+  const d = state.dreams.find(x => x.id === id);
+  if (!d) return;
+  switchTab('schedule');
+  setTimeout(() => {
+    document.getElementById('g-name').value = d.name;
+    document.getElementById('g-role').value = d.role || '';
+    const noteBits = [];
+    if (d.ig) noteBits.push('IG: @' + d.ig);
+    if (d.contact) noteBits.push(d.contact);
+    document.getElementById('g-notes').value = noteBits.join(' · ');
+    document.getElementById('g-name').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('g-when').focus();
+    d.status = 'scheduled';
+    save();
+  }, 100);
+}
+
+function openInstagram(handle) {
+  if (!handle) return;
+  const h = handle.replace(/^@/, '').split(/[\s,/]/)[0];
+  if (!h) return;
+  window.open('https://instagram.com/' + encodeURIComponent(h), '_blank');
+}
+
+function setDreamFilter(f) {
+  state.dreamFilter = f;
+  save();
+  renderDreams();
+}
+
+function renderDreams() {
+  const filterEl = document.getElementById('dream-filter');
+  if (!filterEl) return;
+  const counts = {
+    active: state.dreams.filter(d => d.status === 'idea' || d.status === 'contacted').length,
+    idea: state.dreams.filter(d => d.status === 'idea').length,
+    contacted: state.dreams.filter(d => d.status === 'contacted').length,
+    scheduled: state.dreams.filter(d => d.status === 'scheduled').length,
+    passed: state.dreams.filter(d => d.status === 'passed').length,
+    all: state.dreams.length,
+  };
+  const filters = [
+    { key: 'active',    label: `Active (${counts.active})` },
+    { key: 'idea',      label: `Ideas (${counts.idea})` },
+    { key: 'contacted', label: `Contacted (${counts.contacted})` },
+    { key: 'scheduled', label: `Scheduled (${counts.scheduled})` },
+    { key: 'passed',    label: `Passed (${counts.passed})` },
+    { key: 'all',       label: `All (${counts.all})` },
+  ];
+  filterEl.innerHTML = filters.map(f =>
+    `<button class="${state.dreamFilter === f.key ? 'active' : ''}" onclick="setDreamFilter('${f.key}')">${f.label}</button>`
+  ).join('');
+
+  const list = document.getElementById('dreams-list');
+  let filtered;
+  if (state.dreamFilter === 'all') filtered = state.dreams;
+  else if (state.dreamFilter === 'active') filtered = state.dreams.filter(d => d.status === 'idea' || d.status === 'contacted');
+  else filtered = state.dreams.filter(d => d.status === state.dreamFilter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">No dream guests in this view yet.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(d => {
+    const ig = d.ig || '';
+    const statusLabels = { idea: 'Idea', contacted: 'Contacted', scheduled: 'Scheduled', passed: 'Passed' };
+    return `
+      <div class="dream-item status-${d.status}">
+        <div class="row row-between" style="align-items:flex-start">
+          <div style="flex:1;min-width:220px">
+            <h3 style="margin:0">${escapeHtml(d.name)}</h3>
+            ${d.role ? `<div class="muted" style="margin-top:2px">${escapeHtml(d.role)}</div>` : ''}
+            ${ig ? `<div style="margin-top:6px;font-size:14px">📷 <a href="https://instagram.com/${encodeURIComponent(ig)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">@${escapeHtml(ig)}</a></div>` : ''}
+            ${d.contact ? `<div style="margin-top:4px;font-size:14px">✉️ ${escapeHtml(d.contact)}</div>` : ''}
+          </div>
+          <span class="pill ${d.status === 'scheduled' ? 'pill-ok' : d.status === 'contacted' ? 'pill-warn' : d.status === 'passed' ? 'pill-grey' : 'pill-blue'}">${statusLabels[d.status]}</span>
+        </div>
+        <div class="row" style="margin-top:12px;gap:6px">
+          ${ig ? `<button class="btn btn-sm btn-ghost" onclick="openInstagram('${escapeHtml(ig)}')">View on Instagram →</button>` : ''}
+          ${d.status !== 'scheduled' ? `<button class="btn btn-sm" onclick="scheduleDreamGuest('${d.id}')">Schedule now →</button>` : ''}
+          <select class="btn-sm" style="padding:5px" onchange="updateDreamStatus('${d.id}', this.value)">
+            <option value="idea" ${d.status==='idea'?'selected':''}>Status: Idea</option>
+            <option value="contacted" ${d.status==='contacted'?'selected':''}>Status: Contacted</option>
+            <option value="scheduled" ${d.status==='scheduled'?'selected':''}>Status: Scheduled</option>
+            <option value="passed" ${d.status==='passed'?'selected':''}>Status: Passed</option>
+          </select>
+          <button class="btn btn-sm btn-danger" onclick="deleteDreamGuest('${d.id}')">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Render immediately with whatever's in localStorage / seed so the UI isn't blank
+renderAll();
+
+// Then connect to Firebase
+function bootFromFirebase() {
+  if (!window.__fb || !window.__fb.ready) {
+    setSyncStatus('offline');
+    return;
+  }
+  setSyncStatus('syncing');
+  window.__fb.load().then(remote => {
+    if (remote && typeof remote === 'object') {
+      // Cloud has data — adopt it
+      state = { ...DEFAULT_STATE, ...remote };
+      localStorage.setItem('abc-podcast', JSON.stringify(state));
+      renderAll();
+      setSyncStatus('synced');
+    } else {
+      // Cloud is empty — push current local state up
+      window.__fb.save(state);
+    }
+    // Listen for changes from anyone else editing
+    window.__fb.listen(remoteState => {
+      if (!remoteState) return;
+      if (JSON.stringify(remoteState) === JSON.stringify(state)) return; // echo of our own write
+      state = { ...DEFAULT_STATE, ...remoteState };
+      localStorage.setItem('abc-podcast', JSON.stringify(state));
+      renderAll();
+      setSyncStatus('synced');
+    });
+  }).catch(e => {
+    console.error('Firebase boot failed:', e);
+    setSyncStatus('error');
+  });
+}
+
+if (window.__fb !== undefined) {
+  bootFromFirebase();
+} else {
+  window.addEventListener('firebase-ready', bootFromFirebase, { once: true });
+}
+</script>
+
+</body>
+</html>
