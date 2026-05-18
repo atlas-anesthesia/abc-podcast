@@ -63,7 +63,9 @@
   .brand-title { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
   .brand-sub { font-size: 13px; opacity: 0.85; margin-top: 2px; }
   nav {
-    background: #fff;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
     padding: 0 16px;
     display: flex;
@@ -72,26 +74,29 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    box-shadow: 0 1px 0 rgba(15,30,65,0.02);
+    box-shadow: 0 1px 0 rgba(15,30,65,0.03);
+    scrollbar-width: thin;
   }
+  nav::-webkit-scrollbar { height: 0; }
   nav button {
     background: none;
     border: none;
-    padding: 15px 18px;
+    padding: 14px 16px;
     font-size: 14px;
     font-weight: 600;
     color: var(--ink-soft);
     cursor: pointer;
     border-bottom: 2.5px solid transparent;
     white-space: nowrap;
-    transition: color 0.15s, border-color 0.15s;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
     font-family: inherit;
+    border-radius: 6px 6px 0 0;
   }
   nav button.active {
     color: var(--blue);
     border-bottom-color: var(--blue);
   }
-  nav button:hover { color: var(--blue-dark); }
+  nav button:hover { color: var(--blue-dark); background: var(--blue-tint); }
   main { padding: 28px 24px 60px; max-width: 1100px; margin: 0 auto; }
   .tab { display: none; }
   .tab.active { display: block; }
@@ -191,14 +196,15 @@
     background: #fff;
     border: 1px solid var(--line-soft);
     border-radius: 10px;
-    padding: 16px 18px;
-    margin-bottom: 10px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
     box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.15s;
+    transition: box-shadow 0.15s, transform 0.05s;
   }
   .episode-item:hover, .guest-item:hover, .question-item:hover, .qa-item:hover {
     box-shadow: var(--shadow-md);
   }
+  .question-item { padding: 10px 14px; margin-bottom: 6px; }
   .episode-header {
     display: flex;
     justify-content: space-between;
@@ -223,12 +229,14 @@
   .question-line + .question-line { border-top: 1px dashed var(--line); }
   .empty {
     text-align: center;
-    padding: 32px;
+    padding: 38px 20px;
     color: var(--ink-soft);
-    background: #fff;
+    background: var(--blue-tint);
     border: 2px dashed var(--line);
-    border-radius: 8px;
+    border-radius: 10px;
+    font-size: 14px;
   }
+  .empty strong { display: block; color: var(--ink); margin-bottom: 6px; font-size: 16px; }
   .segment-tabs {
     display: flex;
     gap: 6px;
@@ -251,13 +259,117 @@
     border-color: var(--blue);
   }
   .countdown {
-    background: linear-gradient(135deg, var(--blue), var(--blue-light));
+    background: linear-gradient(135deg, #1e4ca3 0%, #2e5cb8 60%, #3a6bcc 100%);
     color: #fff;
-    padding: 22px;
-    border-radius: 10px;
-    margin-bottom: 18px;
+    padding: 26px 28px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 32px rgba(30,76,163,0.18), 0 2px 6px rgba(30,76,163,0.12);
+    position: relative;
+    overflow: hidden;
   }
-  .countdown .big { font-size: 32px; font-weight: 800; }
+  .countdown::before {
+    content: '';
+    position: absolute;
+    top: -40%; right: -10%;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .countdown.empty-hero { background: linear-gradient(135deg, #5a6885, #7a8aa8); }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: flex-start;
+    position: relative;
+  }
+  @media (max-width: 640px) { .hero-grid { grid-template-columns: 1fr; } }
+  .hero-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    opacity: 0.85;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .hero-guest {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .hero-time { font-size: 15px; opacity: 0.92; margin-bottom: 10px; }
+  .hero-countdown {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .hero-prep { display: flex; gap: 14px; flex-shrink: 0; }
+  .hero-prep-stat {
+    background: rgba(255,255,255,0.13);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 64px;
+  }
+  .hero-prep-stat b {
+    display: block;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .hero-prep-stat span {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 0.8;
+  }
+  @media (max-width: 640px) { .hero-prep { justify-content: flex-start; } }
+  .hero-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.92);
+    color: var(--blue-dark);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: inherit;
+    transition: transform 0.05s, background 0.15s, box-shadow 0.15s;
+  }
+  .hero-btn:hover { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .hero-btn:active { transform: translateY(1px); }
+  .hero-btn-primary { background: #fff; color: var(--blue-dark); }
+  .hero-btn-record {
+    background: #e84a3a;
+    color: #fff;
+  }
+  .hero-btn-record:hover { background: #d93525; }
+  .hero-btn-ghost {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .hero-btn-ghost:hover { background: rgba(255,255,255,0.25); }
   .small { font-size: 12px; color: var(--ink-soft); }
   details summary {
     cursor: pointer;
@@ -283,6 +395,65 @@
   .checkbox-line { display: flex; align-items: center; gap: 8px; }
   .checkbox-line input[type="checkbox"] { width: auto; }
   hr { border: none; border-top: 1px solid var(--line); margin: 16px 0; }
+
+  /* ---------- FAB (FLOATING QUICK NOTE BUTTON) ---------- */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--blue-light));
+    color: #fff;
+    border: none;
+    font-size: 28px;
+    font-weight: 300;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(30,76,163,0.35), 0 2px 4px rgba(30,76,163,0.2);
+    z-index: 60;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .fab:hover { transform: scale(1.08); box-shadow: 0 10px 24px rgba(30,76,163,0.4); }
+  .fab:active { transform: scale(0.98); }
+  .quick-note-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(12,24,52,0.5);
+    backdrop-filter: blur(4px);
+    z-index: 80;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .quick-note-modal.active { display: flex; }
+  .quick-note-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: var(--shadow-lg);
+  }
+  .quick-note-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .quick-note-box input { font-size: 16px; padding: 12px 14px; }
+
+  @media (max-width: 600px) {
+    .fab { bottom: 16px; right: 16px; width: 52px; height: 52px; font-size: 26px; }
+    .sync-status { bottom: 16px; left: 16px; right: auto; }
+  }
 
   /* ---------- SYNC STATUS DOT ---------- */
   .sync-status {
@@ -356,6 +527,22 @@
     color: var(--warn);
     margin-top: 6px;
   }
+
+  /* ---------- DASHBOARD UPCOMING ROWS ---------- */
+  .dash-upcoming-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    margin: 0 -8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.12s;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .dash-upcoming-row:last-child { border-bottom: none; }
+  .dash-upcoming-row:hover { background: var(--blue-tint); }
+  .dash-upcoming-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
   /* ---------- QUICK NOTES ---------- */
   .note-item {
@@ -837,6 +1024,10 @@
     </div>
   </div>
 
+  <div class="row" style="margin-bottom:10px;gap:8px;align-items:center">
+    <input type="text" id="q-search" placeholder="🔍 Search questions..." oninput="renderQuestions()" style="flex:1" />
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('q-search').value=''; renderQuestions()">Clear</button>
+  </div>
   <div class="segment-tabs" id="segment-filter"></div>
   <div id="questions-list"></div>
 </section>
@@ -877,16 +1068,17 @@
   </div>
 
   <div class="card instructions">
-    <h3 style="margin-top:0">One-time setup for auto-syncing subscribable feed</h3>
-    <p>To have new episodes appear in Google Calendar automatically, host the <code>.ics</code> file at a stable URL (free with GitHub Pages):</p>
+    <h3 style="margin-top:0">Optional: auto-syncing Google Calendar feed</h3>
+    <p>Your app is already at <code>atlas-anesthesia.github.io/abc-podcast/</code>. You can put the <code>.ics</code> file in that same repo so Google Calendar can subscribe to it.</p>
     <ol>
-      <li>Create a new <strong>public</strong> GitHub repo (e.g. <code>abc-podcast-calendar</code>).</li>
-      <li>Upload <code>abc-podcast.ics</code> to the repo's root.</li>
-      <li>In repo Settings → Pages, enable Pages from the <code>main</code> branch.</li>
-      <li>Your file will be at: <code>https://&lt;your-github-username&gt;.github.io/abc-podcast-calendar/abc-podcast.ics</code></li>
-      <li>In Google Calendar, click <strong>+</strong> next to "Other calendars" → <strong>From URL</strong> → paste the URL above.</li>
+      <li>Click <strong>Download abc-podcast.ics</strong> above.</li>
+      <li>Open this folder on your Mac: <code>~/Projects/abc-podcast</code>. Drop the downloaded file in there.</li>
+      <li>In Terminal, run:<br/><code>cd ~/Projects/abc-podcast && git add abc-podcast.ics && git commit -m "update calendar" && git push</code></li>
+      <li>The feed URL will be: <code>https://atlas-anesthesia.github.io/abc-podcast/abc-podcast.ics</code></li>
+      <li>In Google Calendar, click <strong>+</strong> next to "Other calendars" → <strong>From URL</strong> → paste that URL.</li>
     </ol>
-    <p><strong>Each time you update the schedule:</strong> re-download the <code>.ics</code> and replace it in the GitHub repo. Google Calendar polls roughly every 24h. (For instant updates on your own calendar, just use the per-event "Add to Google Calendar" link on each scheduled call.)</p>
+    <p><strong>Each time you change the schedule:</strong> re-download, replace the file, re-run the git command. Google Calendar polls roughly every 24h.</p>
+    <p class="muted small" style="margin-top:8px">💡 For instant calendar adds on your own account, use the per-event "Add to Google Calendar" button on each scheduled call — no setup needed.</p>
   </div>
 
   <div class="card">
@@ -904,6 +1096,19 @@
 </section>
 
 </main>
+
+<button class="fab" id="fab-note" onclick="openQuickNote()" title="Quick note (from any tab)" aria-label="Add quick note">+</button>
+
+<div class="quick-note-modal" id="quick-note-modal" onclick="if(event.target===this)closeQuickNote()">
+  <div class="quick-note-box">
+    <div class="quick-note-title">Quick note</div>
+    <input type="text" id="quick-note-input" placeholder="What's the idea?" onkeydown="if(event.key==='Enter')quickNoteSubmit(); if(event.key==='Escape')closeQuickNote()" />
+    <div class="row" style="margin-top:10px;gap:8px;justify-content:flex-end">
+      <button class="btn btn-ghost btn-sm" onclick="closeQuickNote()">Cancel</button>
+      <button class="btn btn-sm" onclick="quickNoteSubmit()">Save note</button>
+    </div>
+  </div>
+</div>
 
 <div id="sync-status" class="sync-status" title="Cloud sync"></div>
 
@@ -1119,6 +1324,11 @@ function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
+// Inline edit state (not persisted — UI-only)
+let editingId = null;
+function setEditing(id) { editingId = id; renderAll(); }
+function cancelEdit() { editingId = null; renderAll(); }
+
 // =========================================================================
 // TAB SWITCHING
 // =========================================================================
@@ -1189,26 +1399,42 @@ function renderSchedule() {
     const d = new Date(ep.scheduledAt);
     const gcalUrl = makeGoogleCalUrl(ep);
     const statusPill = ep.status === 'scheduled' ? 'pill-warn' : ep.status === 'recorded' ? 'pill-blue' : 'pill-ok';
+    if (editingId === 'ep-' + ep.id) {
+      const localISO = ep.scheduledAt ? new Date(new Date(ep.scheduledAt).getTime() - new Date().getTimezoneOffset()*60000).toISOString().slice(0,16) : '';
+      return `
+        <div class="episode-item">
+          <div class="grid grid-2">
+            <div><label>Guest name</label><input type="text" id="edit-ep-name-${ep.id}" value="${escapeHtml(ep.guest)}" /></div>
+            <div><label>Role</label><input type="text" id="edit-ep-role-${ep.id}" value="${escapeHtml(ep.role || '')}" /></div>
+            <div><label>Date &amp; time</label><input type="datetime-local" id="edit-ep-when-${ep.id}" value="${localISO}" /></div>
+          </div>
+          <label style="margin-top:10px">Notes</label>
+          <textarea id="edit-ep-notes-${ep.id}">${escapeHtml(ep.notes || '')}</textarea>
+          <div class="row" style="margin-top:10px;gap:6px;justify-content:flex-end">
+            <button class="btn btn-sm btn-ghost" onclick="cancelEdit()">Cancel</button>
+            <button class="btn btn-sm" onclick="saveEpisode('${ep.id}')">Save</button>
+          </div>
+        </div>
+      `;
+    }
     return `
       <div class="episode-item">
         <div class="episode-header">
           <div>
-            <h3 style="margin:0">${escapeHtml(ep.title)}</h3>
-            <div class="muted" style="margin-top:4px">${escapeHtml(ep.guest)}${ep.role ? ' · ' + escapeHtml(ep.role) : ''}</div>
+            <h3 style="margin:0">${escapeHtml(ep.guest)}</h3>
+            <div class="muted" style="margin-top:2px">${ep.role ? escapeHtml(ep.role) : ''}</div>
           </div>
-          <div class="row" style="gap:6px">
-            <span class="pill ${statusPill}">${ep.status}</span>
-          </div>
+          <span class="pill ${statusPill}">${ep.status}</span>
         </div>
-        <div style="margin-top:10px">
-          <div><strong>📅</strong> ${formatDateTime(d)} (${ep.durationMin} min)</div>
-          ${ep.contact ? `<div><strong>✉️</strong> ${escapeHtml(ep.contact)}</div>` : ''}
+        <div style="margin-top:8px">
+          <div>📅 ${formatDateTime(d)}</div>
           ${ep.notes ? `<div class="muted" style="margin-top:6px">${escapeHtml(ep.notes)}</div>` : ''}
         </div>
         <div class="row" style="margin-top:12px;gap:6px">
           <button class="btn btn-sm" onclick="openBuilder('${ep.id}')">📝 Build outline</button>
           <button class="btn btn-sm" style="background:#c0392b" onclick="startRecording('${ep.id}')">🔴 Record mode</button>
-          <a class="btn btn-sm btn-ghost" target="_blank" href="${gcalUrl}">Add to Google Calendar</a>
+          <button class="btn btn-sm btn-ghost" onclick="setEditing('ep-${ep.id}')">Edit</button>
+          <a class="btn btn-sm btn-ghost" target="_blank" href="${gcalUrl}">📅 Add to calendar</a>
           <select class="btn-sm" style="padding:5px" onchange="updateEpisodeStatus('${ep.id}', this.value)">
             <option value="scheduled" ${ep.status==='scheduled'?'selected':''}>Scheduled</option>
             <option value="recorded" ${ep.status==='recorded'?'selected':''}>Recorded</option>
@@ -1219,6 +1445,25 @@ function renderSchedule() {
       </div>
     `;
   }).join('');
+}
+
+function saveEpisode(id) {
+  const ep = state.episodes.find(x => x.id === id);
+  if (!ep) return;
+  const nameEl = document.getElementById('edit-ep-name-' + id);
+  const roleEl = document.getElementById('edit-ep-role-' + id);
+  const whenEl = document.getElementById('edit-ep-when-' + id);
+  const notesEl = document.getElementById('edit-ep-notes-' + id);
+  if (nameEl && nameEl.value.trim()) {
+    ep.guest = nameEl.value.trim();
+    ep.title = `Episode with ${ep.guest}`;
+  }
+  if (roleEl) ep.role = roleEl.value;
+  if (whenEl && whenEl.value) ep.scheduledAt = whenEl.value;
+  if (notesEl) ep.notes = notesEl.value;
+  save();
+  editingId = null;
+  renderAll();
 }
 
 function goToEpisode(id) {
@@ -1363,12 +1608,15 @@ function renderQuestions() {
   }).join('');
 
   const list = document.getElementById('questions-list');
-  const filtered = state.segmentFilter === 'all'
+  const searchEl = document.getElementById('q-search');
+  const search = (searchEl ? searchEl.value : '').trim().toLowerCase();
+  let filtered = state.segmentFilter === 'all'
     ? state.questions
     : state.questions.filter(q => q.segment === state.segmentFilter);
+  if (search) filtered = filtered.filter(q => q.text.toLowerCase().includes(search));
 
   if (filtered.length === 0) {
-    list.innerHTML = '<div class="empty">No questions in this segment yet. Add one above.</div>';
+    list.innerHTML = `<div class="empty">${search ? 'No matches for "' + escapeHtml(search) + '"' : 'No questions in this segment yet. Add one above.'}</div>`;
     return;
   }
 
@@ -1384,20 +1632,36 @@ function renderQuestions() {
     return `
       <div class="card" style="border-left:4px solid ${meta.color}">
         <h3 style="color:${meta.color}">${meta.label} <span class="muted" style="font-weight:400;font-size:13px">(${groups[segKey].length})</span></h3>
-        ${groups[segKey].map(q => `
-          <div class="question-item" style="${q.used?'opacity:0.5':''}">
-            <div class="row row-between">
-              <div style="flex:1">
-                <div>${escapeHtml(q.text)}</div>
-                ${q.tags && q.tags.length ? `<div style="margin-top:4px">${q.tags.map(t=>`<span class="pill pill-grey">${t}</span>`).join(' ')}</div>` : ''}
+        ${groups[segKey].map(q => {
+          if (editingId === 'q-' + q.id) {
+            const segOpts = Object.keys(SEGMENTS).map(s => `<option value="${s}" ${q.segment===s?'selected':''}>${SEGMENTS[s].label}</option>`).join('');
+            return `
+              <div class="question-item">
+                <div class="row" style="gap:8px;align-items:flex-start">
+                  <select id="edit-q-seg-${q.id}" style="max-width:160px">${segOpts}</select>
+                  <input type="text" id="edit-q-${q.id}" value="${escapeHtml(q.text)}" onkeydown="if(event.key==='Enter')saveQuestion('${q.id}'); if(event.key==='Escape')cancelEdit()" style="flex:1" />
+                  <button class="btn btn-sm btn-ghost" onclick="cancelEdit()">Cancel</button>
+                  <button class="btn btn-sm" onclick="saveQuestion('${q.id}')">Save</button>
+                </div>
               </div>
-              <div class="row" style="gap:6px">
-                <button class="btn btn-sm ${q.used?'btn-ghost':''}" onclick="toggleQuestionUsed('${q.id}')">${q.used?'Mark unused':'Mark used'}</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteQuestion('${q.id}')">Delete</button>
+            `;
+          }
+          return `
+            <div class="question-item" style="${q.used?'opacity:0.5':''}">
+              <div class="row row-between">
+                <div style="flex:1">
+                  <div>${escapeHtml(q.text)}</div>
+                  ${q.tags && q.tags.length ? `<div style="margin-top:4px">${q.tags.map(t=>`<span class="pill pill-grey">${t}</span>`).join(' ')}</div>` : ''}
+                </div>
+                <div class="row" style="gap:6px">
+                  <button class="btn btn-sm btn-ghost" onclick="setEditing('q-${q.id}')">Edit</button>
+                  <button class="btn btn-sm ${q.used?'btn-ghost':''}" onclick="toggleQuestionUsed('${q.id}')">${q.used?'Unused':'Mark used'}</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteQuestion('${q.id}')">Delete</button>
+                </div>
               </div>
             </div>
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </div>
     `;
   }).join('');
@@ -1407,6 +1671,22 @@ function setSegmentFilter(f) {
   state.segmentFilter = f;
   save();
   renderQuestions();
+}
+
+function saveQuestion(id) {
+  const textEl = document.getElementById('edit-q-' + id);
+  const segEl = document.getElementById('edit-q-seg-' + id);
+  if (!textEl) return;
+  const val = textEl.value.trim();
+  if (!val) return;
+  const q = state.questions.find(x => x.id === id);
+  if (q) {
+    q.text = val;
+    if (segEl) q.segment = segEl.value;
+    save();
+  }
+  editingId = null;
+  renderAll();
 }
 
 // =========================================================================
@@ -1447,22 +1727,56 @@ function renderIgQa() {
     list.innerHTML = '<div class="empty">No Q&A yet. Collect questions from your Instagram stories and paste them here.</div>';
     return;
   }
-  list.innerHTML = sorted.map(q => `
-    <div class="qa-item" style="${q.used?'opacity:0.55':''}">
-      <div class="row row-between">
-        <div style="flex:1">
-          <div>${escapeHtml(q.text)}</div>
-          <div class="muted small" style="margin-top:4px">
-            ${q.askedBy ? escapeHtml(q.askedBy) + ' · ' : ''}${q.date}
+  list.innerHTML = sorted.map(q => {
+    if (editingId === 'iq-' + q.id) {
+      return `
+        <div class="qa-item">
+          <textarea id="edit-iq-text-${q.id}" style="min-height:50px">${escapeHtml(q.text)}</textarea>
+          <div class="grid grid-2" style="margin-top:8px">
+            <input type="text" id="edit-iq-by-${q.id}" placeholder="@asked-by" value="${escapeHtml(q.askedBy || '')}" />
+            <input type="date" id="edit-iq-date-${q.id}" value="${q.date || ''}" />
+          </div>
+          <div class="row" style="margin-top:10px;gap:6px;justify-content:flex-end">
+            <button class="btn btn-sm btn-ghost" onclick="cancelEdit()">Cancel</button>
+            <button class="btn btn-sm" onclick="saveIgQa('${q.id}')">Save</button>
           </div>
         </div>
-        <div class="row" style="gap:6px">
-          <button class="btn btn-sm ${q.used?'btn-ghost':''}" onclick="toggleIgQaUsed('${q.id}')">${q.used?'Mark unused':'Mark used'}</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteIgQa('${q.id}')">Delete</button>
+      `;
+    }
+    return `
+      <div class="qa-item" style="${q.used?'opacity:0.55':''}">
+        <div class="row row-between">
+          <div style="flex:1">
+            <div>${escapeHtml(q.text)}</div>
+            <div class="muted small" style="margin-top:4px">
+              ${q.askedBy ? escapeHtml(q.askedBy) + ' · ' : ''}${q.date}
+            </div>
+          </div>
+          <div class="row" style="gap:6px">
+            <button class="btn btn-sm btn-ghost" onclick="setEditing('iq-${q.id}')">Edit</button>
+            <button class="btn btn-sm ${q.used?'btn-ghost':''}" onclick="toggleIgQaUsed('${q.id}')">${q.used?'Unused':'Mark used'}</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteIgQa('${q.id}')">Delete</button>
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
+}
+
+function saveIgQa(id) {
+  const text = document.getElementById('edit-iq-text-' + id);
+  const by = document.getElementById('edit-iq-by-' + id);
+  const date = document.getElementById('edit-iq-date-' + id);
+  if (!text) return;
+  const q = state.igqa.find(x => x.id === id);
+  if (q) {
+    q.text = text.value.trim();
+    q.askedBy = by ? by.value.trim() : q.askedBy;
+    q.date = date ? date.value : q.date;
+    save();
+  }
+  editingId = null;
+  renderAll();
 }
 
 // =========================================================================
@@ -1816,6 +2130,33 @@ function addNote() {
   renderNotes();
 }
 
+function openQuickNote() {
+  document.getElementById('quick-note-modal').classList.add('active');
+  setTimeout(() => document.getElementById('quick-note-input').focus(), 50);
+}
+
+function closeQuickNote() {
+  document.getElementById('quick-note-modal').classList.remove('active');
+  document.getElementById('quick-note-input').value = '';
+}
+
+function quickNoteSubmit() {
+  const input = document.getElementById('quick-note-input');
+  const text = input.value.trim();
+  if (!text) { closeQuickNote(); return; }
+  state.notes = state.notes || [];
+  state.notes.unshift({ id: uid(), text, createdAt: new Date().toISOString() });
+  save();
+  closeQuickNote();
+  renderNotes();
+  // Brief confirmation
+  const fab = document.getElementById('fab-note');
+  if (fab) {
+    fab.textContent = '✓';
+    setTimeout(() => { fab.textContent = '+'; }, 800);
+  }
+}
+
 function deleteNote(id) {
   state.notes = (state.notes || []).filter(n => n.id !== id);
   save();
@@ -1853,21 +2194,49 @@ function renderNotes() {
     return;
   }
   const segOptions = Object.keys(SEGMENTS).map(s => `<option value="${s}">${SEGMENTS[s].label}</option>`).join('');
-  wrap.innerHTML = notes.map(n => `
-    <div class="note-item">
-      <div class="note-text">${escapeHtml(n.text)}</div>
-      <div class="note-meta">
-        <span class="muted small">${timeAgo(n.createdAt)}</span>
-        <div class="row" style="gap:6px">
-          <select onchange="noteToQuestion('${n.id}', this.value); this.value=''" class="btn-sm" style="padding:4px 6px;font-size:12px">
-            <option value="">→ Move to pool…</option>
-            ${segOptions}
-          </select>
-          <button class="btn btn-sm btn-danger" onclick="deleteNote('${n.id}')">Delete</button>
+  wrap.innerHTML = notes.map(n => {
+    if (editingId === 'note-' + n.id) {
+      return `
+        <div class="note-item">
+          <input type="text" id="edit-note-${n.id}" value="${escapeHtml(n.text)}" onkeydown="if(event.key==='Enter')saveNote('${n.id}'); if(event.key==='Escape')cancelEdit()" />
+          <div class="note-meta">
+            <span class="muted small">Editing…</span>
+            <div class="row" style="gap:6px">
+              <button class="btn btn-sm btn-ghost" onclick="cancelEdit()">Cancel</button>
+              <button class="btn btn-sm" onclick="saveNote('${n.id}')">Save</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="note-item">
+        <div class="note-text">${escapeHtml(n.text)}</div>
+        <div class="note-meta">
+          <span class="muted small">${timeAgo(n.createdAt)}</span>
+          <div class="row" style="gap:6px">
+            <button class="btn btn-sm btn-ghost" onclick="setEditing('note-${n.id}')">Edit</button>
+            <select onchange="noteToQuestion('${n.id}', this.value); this.value=''" class="btn-sm" style="padding:4px 6px;font-size:12px">
+              <option value="">→ Move to pool…</option>
+              ${segOptions}
+            </select>
+            <button class="btn btn-sm btn-danger" onclick="deleteNote('${n.id}')">Delete</button>
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
+}
+
+function saveNote(id) {
+  const input = document.getElementById('edit-note-' + id);
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) return;
+  const n = state.notes.find(x => x.id === id);
+  if (n) { n.text = val; save(); }
+  editingId = null;
+  renderAll();
 }
 
 function renderSegmentCards() {
@@ -1928,30 +2297,69 @@ function renderDashboard() {
     const ms = new Date(next.scheduledAt) - new Date();
     const days = Math.floor(ms / (1000*60*60*24));
     const hours = Math.floor((ms / (1000*60*60)) % 24);
+    const mins = Math.floor((ms / (1000*60)) % 60);
+    const segs = (next.segments || []).length;
+    const qs = (next.segments || []).reduce((s, x) => s + (x.questionIds || []).length, 0);
+    const igN = (next.igQuestionIds || []).length;
+    let countdownText;
+    if (days > 0) countdownText = `${days} day${days===1?'':'s'}, ${hours}h away`;
+    else if (hours > 0) countdownText = `${hours}h ${mins}m away`;
+    else countdownText = `${mins} min away`;
     cd.innerHTML = `
       <div class="countdown">
-        <div class="small" style="opacity:.9;text-transform:uppercase;letter-spacing:1px">Next recording</div>
-        <div class="big">${escapeHtml(next.guest)}</div>
-        <div>${formatDateTime(new Date(next.scheduledAt))}</div>
-        <div style="margin-top:10px;font-size:18px;font-weight:600">
-          ${days > 0 ? days + ' day' + (days===1?'':'s') + ', ' : ''}${hours} hour${hours===1?'':'s'} away
+        <div class="hero-grid">
+          <div>
+            <div class="hero-label">Next recording</div>
+            <div class="hero-guest">${escapeHtml(next.guest)}</div>
+            <div class="hero-time">${formatDateTime(new Date(next.scheduledAt))}</div>
+            <div class="hero-countdown">${countdownText}</div>
+          </div>
+          <div class="hero-prep">
+            <div class="hero-prep-stat"><b>${segs}</b><span>segments</span></div>
+            <div class="hero-prep-stat"><b>${qs}</b><span>questions</span></div>
+            <div class="hero-prep-stat"><b>${igN}</b><span>IG Q&amp;As</span></div>
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button class="hero-btn hero-btn-primary" onclick="openBuilder('${next.id}')">📝 Build outline</button>
+          <button class="hero-btn hero-btn-record" onclick="startRecording('${next.id}')">🔴 Start recording</button>
+          <a class="hero-btn hero-btn-ghost" target="_blank" href="${makeGoogleCalUrl(next)}">📅 Add to calendar</a>
         </div>
       </div>
     `;
   } else {
-    cd.innerHTML = `<div class="card"><strong>No upcoming recordings.</strong> <a href="#" onclick="switchTab('schedule');return false">Schedule your next guest →</a></div>`;
+    cd.innerHTML = `
+      <div class="countdown empty-hero">
+        <div class="hero-label">No upcoming recordings</div>
+        <div class="hero-guest" style="font-size:22px">Schedule your next guest</div>
+        <div class="hero-actions" style="margin-top:14px">
+          <button class="hero-btn hero-btn-primary" onclick="switchTab('schedule')">Schedule a guest →</button>
+          <button class="hero-btn hero-btn-ghost" onclick="switchTab('dreams')">Browse dream list</button>
+        </div>
+      </div>
+    `;
   }
 
   const dashU = document.getElementById('dash-upcoming');
   if (upcoming.length === 0) {
-    dashU.innerHTML = '<div class="muted">No upcoming episodes.</div>';
+    dashU.innerHTML = '<div class="muted small">No upcoming episodes.</div>';
   } else {
-    dashU.innerHTML = upcoming.slice(0, 5).map(ep => `
-      <div style="padding:8px 0;border-bottom:1px solid var(--line)">
-        <div style="font-weight:600">${escapeHtml(ep.guest)}</div>
-        <div class="muted small">${formatDateTime(new Date(ep.scheduledAt))} — ${escapeHtml(ep.title)}</div>
-      </div>
-    `).join('');
+    dashU.innerHTML = upcoming.slice(1, 6).map(ep => {
+      const segs = (ep.segments || []).length;
+      const qs = (ep.segments || []).reduce((s, x) => s + (x.questionIds || []).length, 0);
+      return `
+        <div class="dash-upcoming-row" onclick="openBuilder('${ep.id}')">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600">${escapeHtml(ep.guest)}</div>
+            <div class="muted small">${formatDateTime(new Date(ep.scheduledAt))}</div>
+          </div>
+          <div class="dash-upcoming-meta">
+            <span title="${segs} segments, ${qs} questions" class="muted small">${segs}seg · ${qs}q</span>
+            <span style="color:var(--blue);font-weight:600;font-size:13px">→</span>
+          </div>
+        </div>
+      `;
+    }).join('') || '<div class="muted small">No other upcoming episodes.</div>';
   }
 
   const totalQ = state.questions.length;
@@ -2240,6 +2648,22 @@ function renderDreams() {
   list.innerHTML = filtered.map(d => {
     const ig = d.ig || '';
     const statusLabels = { idea: 'Idea', contacted: 'Contacted', scheduled: 'Scheduled', passed: 'Passed' };
+    if (editingId === 'd-' + d.id) {
+      return `
+        <div class="dream-item status-${d.status}">
+          <div class="grid grid-2">
+            <div><label>Name</label><input type="text" id="edit-d-name-${d.id}" value="${escapeHtml(d.name)}" /></div>
+            <div><label>Role</label><input type="text" id="edit-d-role-${d.id}" value="${escapeHtml(d.role || '')}" /></div>
+            <div><label>Instagram</label><input type="text" id="edit-d-ig-${d.id}" value="${escapeHtml(d.ig || '')}" placeholder="@username" /></div>
+            <div><label>Other contact</label><input type="text" id="edit-d-contact-${d.id}" value="${escapeHtml(d.contact || '')}" /></div>
+          </div>
+          <div class="row" style="margin-top:10px;gap:6px;justify-content:flex-end">
+            <button class="btn btn-sm btn-ghost" onclick="cancelEdit()">Cancel</button>
+            <button class="btn btn-sm" onclick="saveDreamGuest('${d.id}')">Save</button>
+          </div>
+        </div>
+      `;
+    }
     return `
       <div class="dream-item status-${d.status}">
         <div class="row row-between" style="align-items:flex-start">
@@ -2254,6 +2678,7 @@ function renderDreams() {
         <div class="row" style="margin-top:12px;gap:6px">
           ${ig ? `<button class="btn btn-sm btn-ghost" onclick="openInstagram('${escapeHtml(ig)}')">View on Instagram →</button>` : ''}
           ${d.status !== 'scheduled' ? `<button class="btn btn-sm" onclick="scheduleDreamGuest('${d.id}')">Schedule now →</button>` : ''}
+          <button class="btn btn-sm btn-ghost" onclick="setEditing('d-${d.id}')">Edit</button>
           <select class="btn-sm" style="padding:5px" onchange="updateDreamStatus('${d.id}', this.value)">
             <option value="idea" ${d.status==='idea'?'selected':''}>Status: Idea</option>
             <option value="contacted" ${d.status==='contacted'?'selected':''}>Status: Contacted</option>
@@ -2265,6 +2690,19 @@ function renderDreams() {
       </div>
     `;
   }).join('');
+}
+
+function saveDreamGuest(id) {
+  const d = state.dreams.find(x => x.id === id);
+  if (!d) return;
+  const nameEl = document.getElementById('edit-d-name-' + id);
+  if (nameEl && nameEl.value.trim()) d.name = nameEl.value.trim();
+  d.role = (document.getElementById('edit-d-role-' + id) || {}).value || '';
+  d.ig = ((document.getElementById('edit-d-ig-' + id) || {}).value || '').replace(/^@/, '');
+  d.contact = (document.getElementById('edit-d-contact-' + id) || {}).value || '';
+  save();
+  editingId = null;
+  renderAll();
 }
 
 // Render immediately with whatever's in localStorage / seed so the UI isn't blank
